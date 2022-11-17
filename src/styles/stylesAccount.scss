@@ -1,7 +1,6 @@
 .containerAccount {
-  background-color: white;
   width: 100%;
-  height: 100%;
+  height: auto;
   color: #fff;
 
   .containerTitleAccount {
@@ -307,35 +306,98 @@
       }
     }
 
-    .containerSelectorDB {
+    .containerCretendialCreator {
+      display: grid;
+      grid-template-columns: auto auto auto;
       background-color: black;
-      width: 30%;
-      height: 100px;
+      width: 100%;
+      height: 60px;
       color: #fff;
       display: grid;
       border-radius: 10px;
       margin: auto;
 
-      p {
-        margin: auto;
+      .containerNameCompany {
+        width: 80%;
+        height: 100%;
+        display: flex;
         align-items: center;
         justify-content: center;
-        display: flex;
+        label {
+          color: white;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+          border: none;
+        }
+        input {
+          align-items: center;
+          justify-content: center;
+          display: flex;
+          margin: auto;
+          border: none;
+          height: 40px;
+          padding: 0 10px;
+          background-color: #d9d9d9;
+          margin: 10px 0;
+          &:focus {
+            outline: none;
+          }
+        }
       }
-      select {
-        color: black;
-        font-weight: bold;
-        background-color: #0099ff;
-        margin: auto;
+      .containerSelectorDB {
+        width: 100%;
+        height: 40%;
+        p {
+          margin: auto;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+        }
+        select {
+          color: black;
+          font-weight: bold;
+          background-color: #0099ff;
+          margin: auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 200px;
+          height: auto;
+          border: none;
+          background-color: white;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+      .containerActivator {
+        width: 100%;
+        height: 100%;
         display: flex;
-        justify-content: center;
+        display: flex;
         align-items: center;
-        width: 200px;
-        height: auto;
-        border: none;
-        background-color: white;
-        &:focus {
-          outline: none;
+        justify-content: center;
+        label {
+          color: white;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+          text-align: left;
+        }
+        input {
+          align-items: center;
+          justify-content: center;
+          display: flex;
+          margin: auto;
+          height: 40px;
+          border: none;
+          padding: 0 10px;
+          background-color: #d9d9d9;
+          margin: 10px 0;
+          &:focus {
+            outline: none;
+          }
         }
       }
     }

@@ -31,7 +31,6 @@ export const MyStore = () => {
         {products.map((item: any) => {
           return (
             <div className="bodyCard" key={item.id}>
-
               <div className="containerimg">
                 <img src={item.image} alt="" />
               </div>
@@ -40,14 +39,15 @@ export const MyStore = () => {
                 <p>Product: {item.name} </p>
                 <p>Brand: {item.brand} </p>
                 <p>Description: {item.description} </p>
-                <p>Price: {item.price} </p>
+                <div className="containerprice">
+                  <p>Price: {item.price} </p> <p>Desc: 10% </p>
+                </div>
               </div>
 
               <div className="containerButtonStore">
                 <button className="btn1">Add to Cart</button>
                 <button className="btn2">Show Product</button>
               </div>
-
             </div>
           );
         })}

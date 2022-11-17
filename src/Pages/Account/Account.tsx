@@ -98,13 +98,27 @@ export const Account = () => {
             <input type="text" id="name" name="moneda" />
           </div>
 
-          <div className="containerSelectorDB">
-            <p>Selecion El Motor de BDD</p>
-            <select name="" id="">
-              <option value="">FIREBASE</option>
-              <option value="">MYSQL</option>
-              <option value="">MONGODB</option>
-            </select>
+          
+          <div className="containerCretendialCreator">
+            
+            <div className="containerNameCompany">
+              <label htmlFor="name">NAME EMPRESA</label>
+              <input type="text" id="name" name="company" />
+            </div>
+
+            <div className="containerSelectorDB">
+              <p>Selecion El Motor de BDD</p>
+              <select name="" id="">
+                <option value="">FIREBASE</option>
+                <option value="">MYSQL</option>
+                <option value="">MONGODB</option>
+              </select>
+            </div>
+
+            <div className="containerActivator">
+              <label htmlFor="name">ACTIVATOR</label>
+              <input type="password" id="name" name="codeActivador" />
+            </div>
           </div>
           <div className="containerButton">
             <button>GUARDAR CONFIGURACIONES</button>
