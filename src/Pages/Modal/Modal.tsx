@@ -58,16 +58,15 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
               </div>
             </div>
           </div>
+          <div className="footerModalProduct">
+            <button className="btn1" onClick={closeMProduct}>
+              Close
+            </button>
+            <button className="btn2" onClick={closeMProduct}>
+              Save Changes
+            </button>
+          </div>
         </Modal.Body>
-
-        <div className="footerModalProduct">
-          <button className="btn1" onClick={closeMProduct}>
-            Close
-          </button>
-          <button className="btn2" onClick={closeMProduct}>
-            Save Changes
-          </button>
-        </div>
       </Modal>
     </form>
   );
@@ -82,7 +81,7 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
         className="containerModalClient"
       >
         <Modal.Header closeButton className="titleModalClient">
-          <Modal.Title  >Create Client</Modal.Title>
+          <Modal.Title>Create Client</Modal.Title>
         </Modal.Header>
         <Modal.Body className="bodyModalClient">
           <div className="containerImgClient">
@@ -130,15 +129,15 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
               </div>
             </div>
           </div>
+          <div className="footerModalClient">
+            <button className="btn1" onClick={closeMClient}>
+              Close
+            </button>
+            <button className="btn2" onClick={closeMClient}>
+              Save Changes
+            </button>
+          </div>
         </Modal.Body>
-        <div className="footerModalClient">
-        <button className="btn1" onClick={closeMClient}>
-          Close
-        </button>
-        <button className="btn2" onClick={closeMClient}>
-          Save Changes
-        </button>
-        </div>
       </Modal>
     </form>
   );
