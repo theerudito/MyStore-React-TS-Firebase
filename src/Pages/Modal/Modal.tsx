@@ -1,28 +1,23 @@
 import { Button, Modal } from "react-bootstrap";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
 
-export const ModalCreateProduct = ({
-  handleClose,
-  show,
-  isOpenMProduct,
-  closeMProduct,
-}: any) => {
+export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   return (
-    <form className="formulario" style={{background: "red"}}>
+    <form>
       <Modal
         show={isOpenMProduct}
         onHide={closeMProduct}
-        className="containerModal"
+        className="containerModalProduct"
       >
-        <Modal.Header closeButton>
-          <Modal.Title className="title">Create Product</Modal.Title>
+        <Modal.Header className="titleModalProduct" closeButton>
+          <Modal.Title>Create Product</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <div className="containerImg">
+        <Modal.Body className="bodyModalProduct">
+          <div className="containerImgProduct">
             <img src={imgProduct} alt="" />
             <input type="file" name="file" />
           </div>
-          <div className="containerBody">
+          <div className="containerInputProduct">
             <div className="containerP1">
               <div>
                 <label htmlFor="">BarCode</label>
@@ -64,14 +59,15 @@ export const ModalCreateProduct = ({
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeMProduct}>
+
+        <div className="footerModalProduct">
+          <button className="btn1" onClick={closeMProduct}>
             Close
-          </Button>
-          <Button variant="primary" onClick={closeMProduct}>
+          </button>
+          <button className="btn2" onClick={closeMProduct}>
             Save Changes
-          </Button>
-        </Modal.Footer>
+          </button>
+        </div>
       </Modal>
     </form>
   );
@@ -83,16 +79,16 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
       <Modal
         show={isOpenMClient}
         onHide={closeMClient}
-        className="containerModal"
+        className="containerModalClient"
       >
-        <Modal.Header closeButton>
-          <Modal.Title className="title">Create Client</Modal.Title>
+        <Modal.Header closeButton className="titleModalClient">
+          <Modal.Title  >Create Client</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <div className="containerImg">
+        <Modal.Body className="bodyModalClient">
+          <div className="containerImgClient">
             <img src={imgClient} alt="" />
           </div>
-          <div className="containerBody">
+          <div className="containerInputClient">
             <div className="containerC1">
               <div>
                 <label htmlFor="">CI</label>
@@ -135,14 +131,14 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeMClient}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={closeMClient}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
+        <div className="footerModalClient">
+        <button className="btn1" onClick={closeMClient}>
+          Close
+        </button>
+        <button className="btn2" onClick={closeMClient}>
+          Save Changes
+        </button>
+        </div>
       </Modal>
     </form>
   );

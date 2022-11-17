@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { imgProduct } from "../Helpers/imgControls";
 import { Account } from "../Pages/Account/Account";
 import { Auth } from "../Pages/Auth/Auth";
 import { Cart } from "../Pages/Cart/Cart";

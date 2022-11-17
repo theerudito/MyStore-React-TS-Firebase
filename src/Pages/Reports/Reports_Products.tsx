@@ -1,4 +1,5 @@
 import React from "react";
+import { imgProduct } from "../../Helpers/imgControls";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Products = () => {

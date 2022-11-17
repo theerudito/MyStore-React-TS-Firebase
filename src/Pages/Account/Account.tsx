@@ -98,9 +98,7 @@ export const Account = () => {
             <input type="text" id="name" name="moneda" />
           </div>
 
-          
           <div className="containerCretendialCreator">
-            
             <div className="containerNameCompany">
               <label htmlFor="name">NAME EMPRESA</label>
               <input type="text" id="name" name="company" />
@@ -134,6 +132,7 @@ export const Account = () => {
         isOpenMProduct={isOpenMProduct}
         closeMProduct={closeMProduct}
       />
+
       <ModalCreateClient
         isOpenMClient={isOpenMClient}
         closeMClient={closeMClient}
