@@ -10,10 +10,24 @@ export const dataLogin = {
 };
 
 export const dataProduct = {
+  barcode: "",
   name: "",
-  price: "",
+  brand: "",
   description: "",
+  stock: "",
+  price: "",
   image: "",
+  desc: "",
+};
+
+export const dataClient = {
+  ci: "",
+  phone: "",
+  firstName: "",
+  lastName: "",
+  direction: "",
+  email: "",
+  city: "",
 };
 
 export const dataUserCart = {
@@ -121,5 +135,3 @@ export const productArray = [
       "https://firebasestorage.googleapis.com/v0/b/ecommerce-erudito.appspot.com/o/imgProducts%2Faceite.png?alt=media&token=6f242117-58b6-424f-8ba7-42c25111bb32",
   },
 ];
-
-
