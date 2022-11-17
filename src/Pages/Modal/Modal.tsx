@@ -8,7 +8,7 @@ export const ModalCreateProduct = ({
   closeMProduct,
 }: any) => {
   return (
-    <form>
+    <form className="formulario" style={{background: "red"}}>
       <Modal
         show={isOpenMProduct}
         onHide={closeMProduct}

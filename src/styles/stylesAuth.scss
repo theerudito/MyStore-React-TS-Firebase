@@ -32,7 +32,86 @@
       input {
         margin: 10px;
         width: 300px;
-        height: 50%;
+        height: 60%;
+        background-color: #d9d9d9;
+        border: none;
+        color: black;
+        &:focus {
+          outline: none;
+        }
+        &::placeholder {
+          color: black;
+          padding-left: 10px;
+        }
+      }
+
+      .containerButtonRegister {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 300px;
+        .btn1Auth {
+          margin: 10px;
+          width: 300px;
+          height: 30px;
+          background-color: #0099ff;
+          color: #fff;
+          border-radius: 10px;
+          border: none;
+          user-select: none;
+          cursor: pointer;
+          &:hover {
+            background-color: #0066cc;
+            color: #fff;
+          }
+        }
+        .btn2Auth {
+          margin: 10px;
+          width: 300px;
+          height: 30px;
+          background-color: orange;
+          color: #fff;
+          border-radius: 10px;
+          border: none;
+          user-select: none;
+          cursor: pointer;
+          &:hover {
+            background-color: orangered;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  .containerLogin {
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    .formLogin {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 350px;
+      height: 350px;
+      border-radius: 10px;
+
+      .TitleForm {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      input {
+        margin: 10px;
+        width: 300px;
+        height: 40%;
         background-color: #d9d9d9;
         border: none;
         color: black;

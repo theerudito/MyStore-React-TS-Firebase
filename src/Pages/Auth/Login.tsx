@@ -46,8 +46,8 @@ export const Login = ({ changeAuth, setchangeAuth }: any) => {
   return (
     <div className="containerFormularioAuth">
       <Waves_Top />
-      <div className="containerRegister">
-        <form className="formRegister" onSubmit={userLogin}>
+      <div className="containerLogin">
+        <form className="formLogin" onSubmit={userLogin}>
           <p className="TitleForm">Login</p>
 
           <input
