@@ -1,0 +1,57 @@
+.containerReportClients {
+  width: 100%;
+  height: 10%;
+
+  h1 {
+    color: black;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .headerTable {
+    background-color: #282c34;
+    color: white;
+    width: 100%;
+    height: 40px;
+    margin: 1px 0 0 auto;
+    ul {
+      display: flex;
+      justify-content: space-between;
+      list-style: none;
+      padding: 10px;
+    }
+  }
+  .bodyTable {
+    background-color: silver;
+    color: white;
+    width: 100%;
+    height: 40px;
+    margin: 1px auto;
+    &:hover {
+      background-color: gray;
+    }
+    ul {
+      color: black;
+      display: flex;
+      justify-content: space-between;
+      list-style: none;
+      padding: 10px;
+      &:hover {
+        color: #fff;
+      }
+    }
+    .containerAction {
+      display: flex;
+      justify-content: space-between;
+
+      i {
+        color: #0099ff;
+        font-size: 20px;
+        cursor: pointer;
+        &:hover {
+          color: #0066cc;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+@import "./stylesAuth.scss";
+@import "./stylesMyStore.scss";
+@import "./stylesCompany.scss";
+@import "./stylesFooter.scss";
+@import "./stylesWave.scss";
+@import "./stylesCart.scss";
+@import "./stylesBurger.scss";
+@import "./stylesHeader.scss";
+@import "./stylesAccount.scss";
+@import "./stylesReportClients.scss";
+@import "./stylesReportProducts.scss";
+@import "./stylesReportDocuments.scss";
+@import "./stylesReportHeader.scss";
+@import "./stylesModalProducts.scss";
+@import "./stylesModalClients.scss";
+
+* {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  font-family: Poppins, sans-serif;
+  
+}
+
+.App {
+  background-color: rgb(0, 255, 34);
+}

@@ -1,0 +1,67 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Footer } from "../Footer/Footer";
+import { Waves_Top } from "../../Helpers/Waves";
+import ImageLeft from "../../Image/controls/left.png";
+import ImageRight from "../../Image/controls/right.png";
+import { productArray } from "../../Helpers/initial_Values";
+
+import { Header } from "../../Header/Header";
+import { Burger } from "../../Burger/Burger";
+import { getProducts } from "../../store/slices/products";
+
+export const MyStore = () => {
+  const dispath = useDispatch();
+
+  const { products = [] } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispath(getProducts(productArray));
+  }, []);
+
+  return (
+    <div className="containerMyStore">
+      <Waves_Top />
+
+      <Burger />
+
+      <Header />
+
+      <div className="containerCard">
+        {products.map((item: any) => {
+          return (
+            <div className="bodyCard" key={item.id}>
+
+              <div className="containerimg">
+                <img src={item.image} alt="" />
+              </div>
+
+              <div className="containerInfor">
+                <p>Product: {item.name} </p>
+                <p>Brand: {item.brand} </p>
+                <p>Description: {item.description} </p>
+                <p>Price: {item.price} </p>
+              </div>
+
+              <div className="containerButtonStore">
+                <button className="btn1">Add to Cart</button>
+                <button className="btn2">Show Product</button>
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="containerPagination">
+        <i className="fa-solid fa-circle-left"></i>
+        <p>10 de 100 pag 100</p>
+        <i className="fa-solid fa-circle-right"></i>
+      </div>
+
+      <div className="containerFooter">
+        <Footer />
+      </div>
+    </div>
+  );
+};

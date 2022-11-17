@@ -1,0 +1,24 @@
+.containerFooter {
+  p {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    margin-top: -60px;
+  }
+  .socialMedia {
+    display: flex;
+    margin:  auto;
+    width: 25%;
+    margin-top: 5px;
+    img {
+      width: 25px;
+      padding-left: 5px;
+      margin: auto;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+    }
+  }
+}

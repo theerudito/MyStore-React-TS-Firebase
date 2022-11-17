@@ -1,0 +1,68 @@
+.containerModal {
+  .containerImg {
+    img {
+      width: 30%;
+      height: 30%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+    }
+    input {
+      background-color: olivedrab;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      margin: auto;
+      &:hover {
+        background-color: #3e8e41;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+  .containerBody {
+    .containerP1 {
+      margin: 10px auto;
+      display: flex;
+      input {
+        background-color: #d9d9d9;
+        height: 30px;
+        width: 90%;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+    .containerP2 {
+      margin: 10px auto;
+      display: flex;
+      input {
+        background-color: #d9d9d9;
+        height: 30px;
+        width: 90%;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .containerP3 {
+      margin: 10px auto;
+      display: flex;
+      input {
+        background-color: #d9d9d9;
+        height: 30px;
+        width: 90%;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+}
