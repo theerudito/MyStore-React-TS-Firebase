@@ -1,8 +1,39 @@
-import React from "react";
+import { collection, getDocs } from "firebase/firestore";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { dbFirebase } from "../../firebase/firebase";
 import { imgProduct } from "../../Helpers/imgControls";
+import { getReportProducts } from "../../store/slices/reports";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Products = () => {
+  const dispath = useDispatch();
+  const dataFirebase = collection(dbFirebase, "productsDB");
+
+  const { reportProducts = [] } = useSelector((state:any) => state.reports);
+  console.log(reportProducts);
+
+  const fetchData = async () => {
+    const data = await getDocs(dataFirebase)
+      .then((querySnapshot) => {
+        const data: any = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ ...doc.data(), id: doc.id });
+        });
+
+        return data;
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+
+    dispath(getReportProducts(data));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="containerReportProduct">
       <h1>Reporte de Productos</h1>
@@ -20,17 +51,21 @@ const Reports_Products = () => {
         </ul>
       </div>
       <div className="bodyTable">
-        <ul>
-          <li>1</li>
-          <li>2</li>
-          <li>Bebida Fanta 065 GR</li>
-          <li>1.50</li>
-          <li>0%</li>
-          <div className="containerAction">
-            <i className="fa-solid fa-eye"></i>
-            <i className="fa-solid fa-trash-can"></i>
-          </div>
-        </ul>
+        {reportProducts.map((item: any) => (
+          <ul>
+            <li>{item.barcode} </li>
+            <li> {item.stock}</li>
+            <li>
+              {item.name} {item.brand} {item.description}{" "}
+            </li>
+            <li>{item.price} </li>
+            <li>{item.desc}% </li>
+            <div className="containerAction">
+              <i className="fa-solid fa-eye"></i>
+              <i className="fa-solid fa-trash-can"></i>
+            </div>
+          </ul>
+        ))}
       </div>
     </div>
   );

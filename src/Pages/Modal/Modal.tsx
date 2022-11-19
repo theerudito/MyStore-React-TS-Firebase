@@ -6,27 +6,87 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { dbFirebase } from "../../firebase/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { dbFirebase, storageFirebase } from "../../firebase/firebase";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
 import { dataClient, dataProduct } from "../../Helpers/initial_Values";
 
 export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
-  const dataFirebase = collection(dbFirebase, "newProduct");
+  const dataBaseFirebase = collection(dbFirebase, "productsDB");
+
   const [product, setproduct] = useState(dataProduct);
+
+  // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
+  const [imageUpLoad, setImageUpLoad] = useState(null);
+  const bucketFirebase = ref(storageFirebase, `empresa/`);
+  const generateID = Math.random().toString(20).substr(2, 9);
+  const [changeImage, setChangeImage] = useState(false);
+  const [prewImage, setprewImage] = useState(null);
+  // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
 
   const newProduct = async (e: any) => {
     e.preventDefault();
     try {
-      // create new client
-      await setDoc(doc(dataFirebase), product);
-      closeMProduct();
+      if (imageUpLoad === null) return;
+      const imageRef = ref(bucketFirebase, `${generateID}`);
+
+      uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+        console.log("Uploaded complete!");
+        getDownloadURL(imageRef).then(async (url) => {
+          console.log(url);
+          new Promise((resolve, reject) => {
+            resolve(
+              setDoc(doc(dataBaseFirebase, product.barcode), {
+                barcode: product.barcode,
+                name: product.name,
+                brand: product.brand,
+                description: product.description,
+                desc: product.desc,
+                price: product.price,
+                stock: product.stock,
+                refImage: generateID,
+                image: url,
+              })
+            );
+            closeMProduct();
+          });
+        });
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
+  // PREVIEW IMAGE ============================================================
+  const handleChangeImage = (e: any) => {
+    const selectedImage = e.target.files[0];
+    console.log(selectedImage);
+    const ALLOWED_TYPES = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/gif",
+      "image/svg+xml",
+      "image/webp",
+    ];
+    if (selectedImage && ALLOWED_TYPES.includes(selectedImage.type)) {
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUpLoad(selectedImage);
+        setChangeImage(true);
+        setprewImage(reader.result);  
+      };
+      reader.readAsDataURL(selectedImage);
+    } else {
+      alert("file not supported");
+    }
+  };
+  // PREVIEW IMAGE ============================================================
+
   return (
     <form>
       <Modal
@@ -40,7 +100,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
         <Modal.Body className="bodyModalProduct">
           <div className="containerImgProduct">
             <img src={imgProduct} alt="" />
-            <input type="file" name="image" />
+            <input type="file" name="image" onChange={handleChangeImage} />
           </div>
           <div className="containerInputProduct">
             <div className="containerP1">
@@ -133,15 +193,18 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
 };
 
 export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
-  const dataFirebase = collection(dbFirebase, "newClient");
+  const state: any = useSelector((state: any) => state.account.nameBusiness);
+  const dataBaseFirebase = collection(dbFirebase, "clientsDB");
   const [client, setClient] = useState(dataClient);
   const [oneClient, setOneClient] = useState({});
+  const distpach = useDispatch();
 
   const newClient = async (e: any) => {
     e.preventDefault();
     try {
       // create new client
-      await setDoc(doc(dataFirebase, client.ci), client);
+
+      await setDoc(doc(dataBaseFirebase, client.ci), client);
       closeMClient();
     } catch (error) {
       console.log(error);
@@ -150,7 +213,7 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
 
   const searhClient = async (id: any) => {
     const idClient = id;
-    const querySnapshot = await getDocs(dataFirebase);
+    const querySnapshot = await getDocs(dataBaseFirebase);
     querySnapshot.forEach((doc) => {
       if (doc.id === idClient) {
         console.log(doc.data());

@@ -1,3 +1,22 @@
+export const dataConfigStore = {
+  nameStore: "",
+  propetary: "",
+  dni: "",
+  direction: "",
+  iva: "",
+  coin: "",
+};
+
+export const credentialStore = {
+  nameStore: "",
+  dataBase: {
+    mysql: "mysql",
+    mongodb: "mongodb",
+    firebase: "firebase",
+  },
+  codeActivator: "",
+};
+
 export const dataRegister = {
   name: "",
   email: "",

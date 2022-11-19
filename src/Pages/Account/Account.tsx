@@ -10,11 +10,29 @@ import {
   imgReports,
   imgStore,
 } from "../../Helpers/imgControls";
+import { credentialStore, dataConfigStore } from "../../Helpers/initial_Values";
+import { handleInputChange } from "../../Helpers/handleChange";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { dbFirebase } from "../../firebase/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { getBusiness } from "../../store/slices/account";
 
 export const Account = () => {
   const navigate = useNavigate();
   const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
   const [isOpenMClient, openMClient, closeMClient]: any = useModal();
+  const [dataAccount, setDataAccount] = useState(dataConfigStore);
+  const [dataDataBase, setDataDataBase] = useState(credentialStore);
+  const nameBusinessDB = `${dataDataBase.nameStore}DB`;
+  const distpach = useDispatch();
+
+  const state: any = useSelector((state: any) => state.account.nameBusiness);
+
+  // hora y fecha actual
+  const today = new Date();
+  const DateNow = today.toLocaleDateString("en-US");
+
+  const dataBaseFirebase = collection(dbFirebase, nameBusinessDB);
 
   const openGOSTORE = () => {
     navigate(RouterData.store);
@@ -31,6 +49,39 @@ export const Account = () => {
   const openReport_Documents = () => {
     navigate(RouterData.r_Ducuments);
   };
+
+  const createStore = async (e: any) => {
+    e.preventDefault();
+
+    const { nameStore, propetary, dni, direction, iva, coin } = dataAccount;
+    const { dataBase, codeActivator } = dataDataBase;
+
+    const newBusiness = {
+      propetary,
+      nameStore,
+      dni,
+      direction,
+      iva,
+      coin,
+      nameBusinessDB,
+      dataBase,
+      codeActivator,
+      date: DateNow,
+    };
+    distpach(getBusiness(nameBusinessDB));
+    localStorage.setItem("nameBusinessDB", nameBusinessDB);
+
+    try {
+      // create new client
+      await setDoc(
+        doc(dataBaseFirebase, nameBusinessDB.toLowerCase()),
+        newBusiness
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="containerAccount">
       <div className="containerTitleAccount">
@@ -80,46 +131,107 @@ export const Account = () => {
         <form>
           <div className="input1">
             <label htmlFor="name">NOMBRE EMPRESA</label>
-            <input type="text" id="name" name="empresa" />
-            <label htmlFor="name">PROPIETARIO</label>
-            <input type="text" id="name" name="propietario" />
-            <label htmlFor="name">RUC</label>
-            <input type="text" id="name" name="ruc" />
+            <input
+              type="text"
+              name="nameStore"
+              value={dataAccount.nameStore}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
+            <label htmlFor="">PROPIETARIO</label>
+            <input
+              type="text"
+              name="propetary"
+              value={dataAccount.propetary}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
+            <label htmlFor="">RUC</label>
+            <input
+              type="text"
+              name="dni"
+              value={dataAccount.dni}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
           </div>
 
           <div className="input2">
-            <label htmlFor="name">DIRECCION</label>
-            <input type="text" id="name" name="direccion" />
+            <label htmlFor="">DIRECCION</label>
+            <input
+              type="text"
+              name="direction"
+              value={dataAccount.direction}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
 
-            <label htmlFor="name">IVA</label>
-            <input type="text" id="name" name="iva" />
+            <label htmlFor="">IVA</label>
+            <input
+              type="text"
+              name="iva"
+              value={dataAccount.iva}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
 
-            <label htmlFor="name">MONEDA</label>
-            <input type="text" id="name" name="moneda" />
+            <label htmlFor="">MONEDA</label>
+            <input
+              type="text"
+              name="coin"
+              value={dataAccount.coin}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
           </div>
 
           <div className="containerCretendialCreator">
             <div className="containerNameCompany">
-              <label htmlFor="name">NAME EMPRESA</label>
-              <input type="text" id="name" name="company" />
+              <label htmlFor="">NAME EMPRESA</label>
+              <input
+                type="text"
+                name="nameStore"
+                value={dataDataBase.nameStore}
+                onChange={(e) =>
+                  handleInputChange(dataDataBase, setDataDataBase, e)
+                }
+              />
             </div>
 
             <div className="containerSelectorDB">
               <p>Selecion El Motor de BDD</p>
-              <select name="" id="">
-                <option value="">FIREBASE</option>
-                <option value="">MYSQL</option>
-                <option value="">MONGODB</option>
+              <select
+                name="dataBase"
+                onChange={(e) =>
+                  handleInputChange(dataDataBase, setDataDataBase, e)
+                }
+              >
+                <option>FIREBASE</option>
+                <option>MYSQL</option>
+                <option>MONGODB</option>
               </select>
             </div>
 
             <div className="containerActivator">
-              <label htmlFor="name">ACTIVATOR</label>
-              <input type="password" id="name" name="codeActivador" />
+              <label htmlFor="">ACTIVATOR</label>
+              <input
+                type="password"
+                name="codeActivator"
+                value={dataDataBase.codeActivator}
+                onChange={(e) =>
+                  handleInputChange(dataDataBase, setDataDataBase, e)
+                }
+              />
             </div>
           </div>
           <div className="containerButton">
-            <button>GUARDAR CONFIGURACIONES</button>
+            <button onClick={createStore}>GUARDAR CONFIGURACIONES</button>
           </div>
         </form>
       </div>

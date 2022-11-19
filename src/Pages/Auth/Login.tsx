@@ -1,22 +1,14 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { authFirebase } from "../../firebase/firebase";
-import { dataLogin, dataRegister } from "../../Helpers/initial_Values";
-import { useNavigate } from "react-router-dom";
+import { dataLogin } from "../../Helpers/initial_Values";
 import { Waves_Top } from "../../Helpers/Waves";
+import { handleInputChange } from "../../Helpers/handleChange";
+import { useNavigate } from "react-router-dom";
 
 export const Login = ({ changeAuth, setchangeAuth }: any) => {
   const [dataUser, setDataUser] = useState(dataLogin);
-
   const navigate = useNavigate();
-
-  const handleInputChange = (e: any) => {
-    e.preventDefault();
-    setDataUser({
-      ...dataUser,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const userLogin = async (e: any) => {
     // logic to register with firebase
@@ -29,7 +21,7 @@ export const Login = ({ changeAuth, setchangeAuth }: any) => {
       );
 
       if (userCredential) {
-        navigate("/account");
+        navigate("/home");
       } else {
         alert("Error");
         console.log("Error");
@@ -49,26 +41,22 @@ export const Login = ({ changeAuth, setchangeAuth }: any) => {
       <div className="containerLogin">
         <form className="formLogin" onSubmit={userLogin}>
           <p className="TitleForm">Login</p>
-
           <input
             placeholder="Email"
             name="email"
             type="email"
             value={dataUser.email}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange(dataUser, setDataUser, e)}
           />
-
           <input
             placeholder="Password"
             name="password"
             type="password"
             value={dataUser.password}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange(dataUser, setDataUser, e)}
           />
-
           <div className="containerButtonRegister">
             <button className="btn1Auth">Login</button>
-
             <button className="btn2Auth" onClick={goRegister}>
               Go To Register
             </button>
