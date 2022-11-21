@@ -70,7 +70,7 @@ export const MyStore = () => {
                 <p>Brand: {item.brand} </p>
                 <p>Description: {item.description} </p>
                 <div className="containerprice">
-                  <p>Price: {item.price} </p> <p>Desc: 10% </p>
+                  <p>Price: {item.price} </p> <p>Desc: {item.desc}% </p>
                 </div>
               </div>
 

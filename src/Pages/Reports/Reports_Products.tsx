@@ -2,16 +2,14 @@ import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase } from "../../firebase/firebase";
-import { imgProduct } from "../../Helpers/imgControls";
 import { getReportProducts } from "../../store/slices/reports";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Products = () => {
   const dispath = useDispatch();
   const dataFirebase = collection(dbFirebase, "productsDB");
+  const { reportProducts = [] } = useSelector((state: any) => state.reports);
 
-  const { reportProducts = [] } = useSelector((state:any) => state.reports);
-  console.log(reportProducts);
 
   const fetchData = async () => {
     const data = await getDocs(dataFirebase)
@@ -20,13 +18,11 @@ const Reports_Products = () => {
         querySnapshot.forEach((doc) => {
           data.push({ ...doc.data(), id: doc.id });
         });
-
         return data;
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
-
     dispath(getReportProducts(data));
   };
 
@@ -37,9 +33,7 @@ const Reports_Products = () => {
   return (
     <div className="containerReportProduct">
       <h1>Reporte de Productos</h1>
-
       <ReportHeader />
-
       <div className="headerTable">
         <ul>
           <li>CODIGO</li>
@@ -52,7 +46,7 @@ const Reports_Products = () => {
       </div>
       <div className="bodyTable">
         {reportProducts.map((item: any) => (
-          <ul>
+          <ul key={item.barcode}>
             <li>{item.barcode} </li>
             <li> {item.stock}</li>
             <li>

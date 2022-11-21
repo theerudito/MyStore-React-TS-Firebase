@@ -78,7 +78,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
       reader.onloadend = () => {
         setImageUpLoad(selectedImage);
         setChangeImage(true);
-        setprewImage(reader.result);  
+        setprewImage(reader.result);
       };
       reader.readAsDataURL(selectedImage);
     } else {
@@ -203,7 +203,6 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
     e.preventDefault();
     try {
       // create new client
-
       await setDoc(doc(dataBaseFirebase, client.ci), client);
       closeMClient();
     } catch (error) {

@@ -49,17 +49,20 @@ export const dataClient = {
   city: "",
 };
 
-export const dataUserCart = {
-  name: "",
-  email: "",
-  total: "",
-};
-
 export const dataCart = {
-  cant: "",
-  description: "",
-  priceUnitary: "",
-  priceTotal: "",
+  id: "",
+  phone: "",
+  firstName: "",
+  lastName: "",
+  direction: "",
+  email: "",
+  date: "",
+  document: "",
+  typeDocu: {
+    fac: "factura",
+    nota: "nota de venta",
+    proforma: "proforma",
+  }
 };
 
 export const productArray = [
