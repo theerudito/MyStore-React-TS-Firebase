@@ -1,14 +1,11 @@
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Burger } from "../../Burger/Burger";
 import { dbFirebase } from "../../firebase/firebase";
 import { Header } from "../../Header/Header";
-import {
-  getNumIvaCompany,
-  setNumDocumentCompany,
-} from "../../Helpers/getDataFactory";
-import { DateNow, HourNow } from "../../Helpers/getDate_Hour";
+import { getNumIvaCompany } from "../../Helpers/getDataFactory";
+import { DateNow, DateNowFormat, HourNow } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgStore } from "../../Helpers/imgControls";
 import {
@@ -22,6 +19,7 @@ import { Footer } from "../Footer/Footer";
 
 export const Cart = () => {
   const { cart = [], totalBuy } = useSelector((state: any) => state.cart);
+  const CompanyBD = collection(dbFirebase, "EruditoDB");
   const cartFirebaseBD = collection(dbFirebase, "cartDB");
   const clientFirebaseDB = collection(dbFirebase, "clientsDB");
   const [docuInfor, setDocuInfor] = useState(dataDocument);
@@ -29,23 +27,25 @@ export const Cart = () => {
   const [clientFinal, setClientFinal] = useState(dataClientFinal);
   const [searchClient, setSearchClient] = useState(false);
   const [ivaCompany, setIvaCompany] = useState(0);
-  const [numDocu, setNumDocu] = useState(0);
-
-  console.log(numDocu);
+  const [numDocuFac, setNumDocuFac] = useState(0);
+  const [dateToday, setDateToday] = useState("");
+  console.log(dateToday);
 
   const getCompanyIva = async () => {
     const ivaCompany: any = await getNumIvaCompany();
     setIvaCompany(ivaCompany.iva);
+    setNumDocuFac(ivaCompany.numfactura);
+    //const date = DateNowFormat;
+    setDateToday(DateNow);
   };
 
   const setDocumentCompany = async () => {
-    await setNumDocumentCompany(docuInfor.numeroDocument);
-    
+    const Document = doc(CompanyBD, "1721457495");
+    await updateDoc(Document, { numfactura: numDocuFac + 1 });
   };
 
   const generateID = Math.random().toString(20).substr(2, 9);
   const distpach = useDispatch();
-  const porsentajeIva = 1.12;
 
   const subtotal = totalBuy / `1.${ivaCompany}`;
   const total = totalBuy;
@@ -53,7 +53,6 @@ export const Cart = () => {
 
   const getDNI = async (e: any) => {
     e.preventDefault();
-    // buscar en la base de datos si existe el cliente
     const docRef = getDoc(doc(clientFirebaseDB, clientInfor.ci));
     const docSnap = await docRef;
     console.log("data", docSnap.data());
@@ -71,6 +70,7 @@ export const Cart = () => {
 
   const newClient = async (e: any) => {
     e.preventDefault();
+    setDocumentCompany();
     try {
       if (searchClient === true) {
         await setDoc(doc(cartFirebaseBD), {
@@ -92,6 +92,8 @@ export const Cart = () => {
           TotalBuy: { subtotal, total, iva },
         });
       }
+
+      // resetear el carrito
     } catch (error) {
       console.log(error);
     }
@@ -223,27 +225,26 @@ export const Cart = () => {
         </form>
         <div className="InforData">
           <div className="containerInforDocu">
-            <p>Fecha</p>
+            <p>Fecha {dateToday} </p>
             <input
               type="date"
               className="inputDate"
-              name="dateDocument"
-              value={docuInfor.dateDocument}
-              onChange={(e) => handleInputChange(docuInfor, setDocuInfor, e)}
+              name="dateToday"
+              value={dateToday}
+              onChange={(e: any) => setDateToday(e.target.value)}
             />
             <p>Select Document </p>
             <select name="" id="">
               <option value="">Factura</option>
               <option value="">Proforma</option>
             </select>
-            <p>#Document</p>
+            <p>#Document {numDocuFac} </p>
             <input
               type="number"
               className="inputDocument"
               name="numeroDocument"
-              onClick={setDocumentCompany}
-              value={docuInfor.numeroDocument}
-              onChange={(e) => handleInputChange(docuInfor, setDocuInfor, e)}
+              value={numDocuFac}
+              onChange={(e: any) => setNumDocuFac(e.target.value)}
             />
           </div>
           <div className="containerTotal">

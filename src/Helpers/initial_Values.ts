@@ -5,6 +5,9 @@ export const dataConfigStore = {
   direction: "",
   iva: "",
   coin: "",
+  numfactura: "",
+  numnotadeventa: "",
+  numproforma: "",
 };
 
 export const credentialStore = {
@@ -66,7 +69,7 @@ export const dataCart = {
   lastName: "",
   direction: "",
   email: "",
-}; 
+};
 
 export const dataDocument = {
   dateDocument: "",
@@ -75,8 +78,8 @@ export const dataDocument = {
     factura: "factura",
     boleta: "nota de venta",
     notaCredito: "proforma",
-  }
-}
+  },
+};
 
 export const productArray = [
   {

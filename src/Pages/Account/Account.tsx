@@ -26,7 +26,6 @@ export const Account = () => {
   const nameBusinessDB = `${dataDataBase.nameStore}DB`;
   const distpach = useDispatch();
 
-  const state: any = useSelector((state: any) => state.account.nameBusiness);
 
   // hora y fecha actual
   const today = new Date();
@@ -53,7 +52,17 @@ export const Account = () => {
   const createStore = async (e: any) => {
     e.preventDefault();
 
-    const { nameStore, propetary, dni, direction, iva, coin } = dataAccount;
+    const {
+      nameStore,
+      propetary,
+      dni,
+      direction,
+      iva,
+      coin,
+      numfactura,
+      numnotadeventa,
+      numproforma,
+    } = dataAccount;
     const { dataBase, codeActivator } = dataDataBase;
 
     const newBusiness = {
@@ -65,6 +74,9 @@ export const Account = () => {
       coin,
       nameBusinessDB,
       dataBase,
+      numfactura,
+      numnotadeventa,
+      numproforma,
       codeActivator,
       date: DateNow,
     };
@@ -73,10 +85,7 @@ export const Account = () => {
 
     try {
       // create new client
-      await setDoc(
-        doc(dataBaseFirebase, nameBusinessDB.toLowerCase()),
-        newBusiness
-      );
+      await setDoc(doc(dataBaseFirebase, dataAccount.dni), newBusiness);
     } catch (error) {
       console.log(error);
     }
@@ -229,6 +238,37 @@ export const Account = () => {
                 }
               />
             </div>
+          </div>
+
+          <div className="containerSecuence">
+            <h4>#Secuence</h4>
+            <label htmlFor="">#FACTURA</label>
+            <input
+              type="text"
+              name="numfactura"
+              value={dataAccount.numfactura}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
+            <label htmlFor="">#NOTA DE VENTA</label>
+            <input
+              type="text"
+              name="numnotadeventa"
+              value={dataAccount.numnotadeventa}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
+            <label htmlFor="">#PROFORMA</label>
+            <input
+              type="text"
+              name="numproforma"
+              value={dataAccount.numproforma}
+              onChange={(e) =>
+                handleInputChange(dataAccount, setDataAccount, e)
+              }
+            />
           </div>
           <div className="containerButton">
             <button onClick={createStore}>GUARDAR CONFIGURACIONES</button>

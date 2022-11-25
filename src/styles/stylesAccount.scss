@@ -462,4 +462,34 @@
       user-select: none;
     }
   }
+
+  .containerSecuence {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    label {
+      color: white;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      text-align: left;
+    }
+    input {
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      margin: auto;
+      height: 40px;
+      border: none;
+      padding: 0 10px;
+      background-color: #d9d9d9;
+      margin: 10px 0;
+      &:focus {
+        outline: none;
+      }
+    }
+  }
 }
