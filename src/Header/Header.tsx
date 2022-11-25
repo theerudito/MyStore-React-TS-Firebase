@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import ImageCart from "../Image/controls/cart.png";
 import { RouterData } from "../Routes/Router";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export const Header = () => {
+  const { cart } = useSelector((state: any) => state.cart);
   const [goCart, setGoCart] = useState(false);
   const navigate = useNavigate();
 
@@ -23,7 +25,7 @@ export const Header = () => {
         <i className="fa-solid fa-magnifying-glass"></i>
       </button>
       <div className="containerShooping" onClick={operCart}>
-        <p>0</p>
+        <p>{cart.length} </p>
         <img src={ImageCart} alt="" />
       </div>
     </div>

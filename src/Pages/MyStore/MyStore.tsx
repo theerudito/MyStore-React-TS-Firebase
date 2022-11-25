@@ -8,6 +8,7 @@ import { Burger } from "../../Burger/Burger";
 import { getProducts } from "../../store/slices/products";
 import { dbFirebase } from "../../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { getCart } from "../../store/slices/cart";
 
 export const MyStore = () => {
   const dispath = useDispatch();
@@ -45,6 +46,10 @@ export const MyStore = () => {
     }
   };
 
+  const addToCart = (item: any) => {
+    dispath(getCart(item));
+  };
+
   useEffect(() => {
     getAllProduct();
   }, []);
@@ -75,8 +80,10 @@ export const MyStore = () => {
               </div>
 
               <div className="containerButtonStore">
-                <button className="btn1">Add to Cart</button>
-                <button className="btn2">Show Product</button>
+                <button className="btn1" onClick={() => addToCart(item)}>
+                  Add to Cart
+                </button>
+                {/* <button className="btn2">Show Product</button> */}
               </div>
             </div>
           );

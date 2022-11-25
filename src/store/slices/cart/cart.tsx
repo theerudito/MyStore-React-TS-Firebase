@@ -1,22 +1,55 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const cardSlice = createSlice({
+export const cartSlice = createSlice({
   name: "card",
   initialState: {
-    card: [],
+    cardInfor: [],
+    cart: [],
     isLoading: false,
-    total: 0,
+    totalBuy: 0,
   },
   reducers: {
-    getCart: (state, action) => {
+    getCartInfor: (state, action) => {
       state.isLoading = true;
-      state.card = action.payload;
+      state.cardInfor = action.payload;
     },
-    getTotals: (state, action) => {
-      console.log(action.payload);
-      state.total = action.payload;
+    getCart: (state, action) => {
+      const idPproduct = action.payload.id;
+      const vUnitary = Number(action.payload.price);
+      if (state.cart.findIndex((itemOld) => itemOld.id === idPproduct) < 0) {
+        state.cart = [
+          ...state.cart,
+          { ...action.payload, quantity: 1, priceTotal: vUnitary },
+        ];
+      } else {
+        state.cart = state.cart.map((itemOld) => {
+          if (itemOld.id === idPproduct) {
+            return {
+              ...itemOld,
+              quantity: itemOld.quantity + 1,
+              priceTotal: itemOld.price * (itemOld.quantity + 1),
+            };
+          } else {
+            return itemOld;
+          }
+        });
+      }
+    },
+    getTotalBuy: (state, action) => {
+      state.totalBuy = action.payload.reduce(
+        (acc: any, item: any) => acc + item.priceTotal,
+        0
+      );
+    },
+
+    deleteCart: (state, action) => {
+      state.cart = state.cart.filter((item) => item.id !== action.payload);
+      if (state.cart.length === 0) {
+        state.totalBuy = 0;
+      }
     },
   },
 });
 
-export const { getCart, getTotals } = cardSlice.actions;
+export const { getCart, getCartInfor, deleteCart, getTotalBuy } =
+  cartSlice.actions;

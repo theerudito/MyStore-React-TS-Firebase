@@ -49,6 +49,16 @@ export const dataClient = {
   city: "",
 };
 
+export const dataClientFinal = {
+  ci: "099999999",
+  phone: "099999999",
+  firstName: "Consumidor",
+  lastName: "Final",
+  direction: "SN",
+  email: "email@.com",
+  city: "",
+};
+
 export const dataCart = {
   id: "",
   phone: "",
@@ -56,14 +66,17 @@ export const dataCart = {
   lastName: "",
   direction: "",
   email: "",
-  date: "",
-  document: "",
-  typeDocu: {
-    fac: "factura",
-    nota: "nota de venta",
-    proforma: "proforma",
+}; 
+
+export const dataDocument = {
+  dateDocument: "",
+  numeroDocument: "",
+  typeDocument: {
+    factura: "factura",
+    boleta: "nota de venta",
+    notaCredito: "proforma",
   }
-};
+}
 
 export const productArray = [
   {
