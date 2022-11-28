@@ -20,7 +20,7 @@ export const Register = ({ changeAuth, setchangeAuth }: any) => {
         dataUser.password
       );
       console.log(userCredential);
-      navigate("/home");
+      navigate("/account");
     } catch (error) {
       console.log(error);
     }

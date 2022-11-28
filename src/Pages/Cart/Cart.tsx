@@ -28,15 +28,13 @@ export const Cart = () => {
   const [searchClient, setSearchClient] = useState(false);
   const [ivaCompany, setIvaCompany] = useState(0);
   const [numDocuFac, setNumDocuFac] = useState(0);
-  const [dateToday, setDateToday] = useState("");
-  console.log(dateToday);
+  const [dateDocument, setDateDocument] = useState(DateNowFormat);
+  console.log(dateDocument);
 
   const getCompanyIva = async () => {
     const ivaCompany: any = await getNumIvaCompany();
     setIvaCompany(ivaCompany.iva);
     setNumDocuFac(ivaCompany.numfactura);
-    //const date = DateNowFormat;
-    setDateToday(DateNow);
   };
 
   const setDocumentCompany = async () => {
@@ -75,20 +73,22 @@ export const Cart = () => {
       if (searchClient === true) {
         await setDoc(doc(cartFirebaseBD), {
           id: generateID,
-          registre: { DateNow, HourNow },
+          Date: DateNow,
+          Hour: HourNow,
           DataCard: cart,
           DataClient: clientInfor,
-          DataDocument: docuInfor,
+          DataDocument: { numDocuFac, dateDocument },
           TotalBuy: { subtotal, total, iva },
         });
       } else {
         await setDoc(doc(clientFirebaseDB, clientInfor.ci), clientInfor);
         await setDoc(doc(cartFirebaseBD), {
           id: generateID,
-          registre: { DateNow, HourNow },
+          Date: DateNow,
+          Hour: HourNow,
           DataCard: cart,
           DataClient: clientInfor,
-          DataDocument: docuInfor,
+          DataDocument: { numDocuFac, dateDocument },
           TotalBuy: { subtotal, total, iva },
         });
       }
@@ -225,13 +225,13 @@ export const Cart = () => {
         </form>
         <div className="InforData">
           <div className="containerInforDocu">
-            <p>Fecha {dateToday} </p>
+            <p>Fecha {dateDocument} </p>
             <input
               type="date"
               className="inputDate"
               name="dateToday"
-              value={dateToday}
-              onChange={(e: any) => setDateToday(e.target.value)}
+              value={dateDocument}
+              onChange={(e: any) => setDateDocument(e.target.value)}
             />
             <p>Select Document </p>
             <select name="" id="">

@@ -21,7 +21,7 @@ export const Login = ({ changeAuth, setchangeAuth }: any) => {
       );
 
       if (userCredential) {
-        navigate("/home");
+        navigate("/account");
       } else {
         alert("Error");
         console.log("Error");

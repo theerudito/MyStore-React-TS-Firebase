@@ -11,6 +11,7 @@ import { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase, storageFirebase } from "../../firebase/firebase";
+import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
 import { dataClient, dataProduct } from "../../Helpers/initial_Values";
@@ -50,6 +51,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
                 stock: product.stock,
                 refImage: generateID,
                 image: url,
+                Date: DateNowFormat,
               })
             );
             closeMProduct();
@@ -203,7 +205,20 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
     e.preventDefault();
     try {
       // create new client
-      await setDoc(doc(dataBaseFirebase, client.ci), client);
+      const { ci, firstName, lastName, phone, direction, city, email } = client;
+
+      const newClient = {
+        ci,
+        firstName,
+        lastName,
+        phone,
+        direction,
+        city,
+        email,
+        Date: DateNowFormat,
+      };
+
+      await setDoc(doc(dataBaseFirebase, client.ci), newClient);
       closeMClient();
     } catch (error) {
       console.log(error);

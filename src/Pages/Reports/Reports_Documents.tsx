@@ -1,7 +1,9 @@
 import { collection, getDocs } from "firebase/firestore";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase } from "../../firebase/firebase";
+import Calendar from "../../Helpers/Calendar";
+import { DateNow } from "../../Helpers/getDate_Hour";
 import { getCartInfor } from "../../store/slices/cart";
 import { ReportHeader } from "./ReportHeader";
 
@@ -10,12 +12,13 @@ export const Reports_Documents = () => {
   const dataFirebase = collection(dbFirebase, "cartDB");
   const { cardInfor = [], total } = useSelector((state: any) => state.cart);
 
+  console.log(cardInfor);
+
   const fetchData = async () => {
     const data = await getDocs(dataFirebase)
       .then((querySnapshot) => {
         const data: any = [];
         querySnapshot.forEach((doc) => {
-          //const { CartData, CartInfor, TotalBuy } = doc.data();
           data.push({ ...doc.data() });
         });
         return data;
@@ -33,6 +36,11 @@ export const Reports_Documents = () => {
   return (
     <div className="containerReportDocuments">
       <h1>Reporte de Documentos</h1>
+
+      {/* <div className="containerCalendar">
+        <Calendar />
+      </div> */}
+
       <ReportHeader />
       <div className="headerTable">
         <ul>
@@ -44,25 +52,20 @@ export const Reports_Documents = () => {
         </ul>
       </div>
       <div className="bodyTable">
-        {cardInfor.map(
-          (item: any) => (
-            
-            (
-              <ul key={item.id}>
-                <li>
-                  {item.DataClient.firstName} {item.DataClient.lastName}{" "}
-                </li>
-                <li>{item.DataDocument.numeroDocument} </li>
-                <li>{item.DataDocument.dateDocument} </li>
-                <li>{item.TotalBuy} </li>
-                <div className="containerAction">
-                  <i className="fa-solid fa-eye"></i>
-                  <i className="fa-solid fa-trash-can"></i>
-                </div>
-              </ul>
-            )
-          )
-        )}
+        {cardInfor.map((item: any) => (
+          <ul key={item.id}>
+            <li>
+              {item.DataClient.firstName} {item.DataClient.lastName}{" "}
+            </li>
+            <li>{item.DataDocument.numDocuFac} </li>
+            <li>{item.Date} </li>
+            <li>{item.TotalBuy.total.toFixed(2)} </li>
+            <div className="containerAction">
+              <i className="fa-solid fa-eye"></i>
+              <i className="fa-solid fa-trash-can"></i>
+            </div>
+          </ul>
+        ))}
       </div>
 
       <div>
