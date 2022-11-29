@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RouterData } from "../../Routes/Router";
 import { useModal } from "../../Hook/useModal";
-import { ModalCreateClient, ModalCreateProduct } from "../Modal/Modal";
 import {
   imgAvatar,
   imgClient,
@@ -16,6 +15,8 @@ import { collection, doc, setDoc } from "firebase/firestore";
 import { dbFirebase } from "../../firebase/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { getBusiness } from "../../store/slices/account";
+import { ModalCreateProduct } from "../Modal/ModalProduct";
+import { ModalCreateClient } from "../Modal/ModalClient";
 
 export const Account = () => {
   const navigate = useNavigate();

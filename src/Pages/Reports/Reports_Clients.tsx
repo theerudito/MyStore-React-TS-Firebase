@@ -1,11 +1,15 @@
 import { collection, getDocs } from "firebase/firestore";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase } from "../../firebase/firebase";
+import { useModal } from "../../Hook/useModal";
 import { getReportClients } from "../../store/slices/reports";
+import { ModalCreateClient } from "../Modal/ModalClient";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Clients = () => {
+  const [clients, setClients] = useState({});
+  const [isOpenMClient, openMClient, closeMClient]: any = useModal();
   const dataFirebase = collection(dbFirebase, "clientsDB");
   const { reportClients = [] } = useSelector((state: any) => state.reports);
   const dispath = useDispatch();
@@ -28,6 +32,11 @@ const Reports_Clients = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const openEditClient = (item: any) => {
+    setClients(item);
+    openMClient();
+  };
 
   return (
     <div className="containerReportClients">
@@ -54,12 +63,21 @@ const Reports_Clients = () => {
             <li>{item.phone} </li>
             <li>{item.email} </li>
             <div className="containerAction">
-              <i className="fa-solid fa-eye"></i>
+              <i
+                className="fa-solid fa-eye"
+                onClick={() => openEditClient(item)}
+              ></i>
               <i className="fa-solid fa-trash-can"></i>
             </div>
           </ul>
         ))}
       </div>
+
+      <ModalCreateClient
+        editClient={clients}
+        isOpenMClient={isOpenMClient}
+        closeMClient={closeMClient}
+      />
     </div>
   );
 };

@@ -1,15 +1,18 @@
 import { collection, getDocs } from "firebase/firestore";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase } from "../../firebase/firebase";
+import { useModal } from "../../Hook/useModal";
 import { getReportProducts } from "../../store/slices/reports";
+import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Products = () => {
   const dispath = useDispatch();
   const dataFirebase = collection(dbFirebase, "productsDB");
   const { reportProducts = [] } = useSelector((state: any) => state.reports);
-
+  const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
+  const [product, setProduct] = useState({});
 
   const fetchData = async () => {
     const data = await getDocs(dataFirebase)
@@ -29,6 +32,11 @@ const Reports_Products = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const openEditProduct = (item: any) => {
+    setProduct(item);
+    openMProduct();
+  };
 
   return (
     <div className="containerReportProduct">
@@ -55,12 +63,20 @@ const Reports_Products = () => {
             <li>{item.price} </li>
             <li>{item.desc}% </li>
             <div className="containerAction">
-              <i className="fa-solid fa-eye"></i>
+              <i
+                className="fa-solid fa-eye"
+                onClick={() => openEditProduct(item)}
+              ></i>
               <i className="fa-solid fa-trash-can"></i>
             </div>
           </ul>
         ))}
       </div>
+      <ModalCreateProduct
+        editProduct={product}
+        isOpenMProduct={isOpenMProduct}
+        closeMProduct={closeMProduct}
+      />
     </div>
   );
 };
