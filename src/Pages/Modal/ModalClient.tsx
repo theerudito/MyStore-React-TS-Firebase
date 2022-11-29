@@ -14,11 +14,7 @@ import { dbFirebase, storageFirebase } from "../../firebase/firebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
-import {
-  dataClient,
-  dataClientFinal,
-  dataProduct,
-} from "../../Helpers/initial_Values";
+import { dataClient, dataClientFinal } from "../../Helpers/initial_Values";
 
 export const ModalCreateClient = ({
   isOpenMClient,

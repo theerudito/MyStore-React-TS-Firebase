@@ -6,19 +6,19 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase, storageFirebase } from "../../firebase/firebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
-import {
-  dataClient,
-  dataClientFinal,
-  dataProduct,
-} from "../../Helpers/initial_Values";
+import { dataProduct } from "../../Helpers/initial_Values";
 
 export const ModalCreateProduct = ({
   isOpenMProduct,
@@ -26,62 +26,117 @@ export const ModalCreateProduct = ({
   editProduct,
 }: any) => {
   const productBaseFirebase = collection(dbFirebase, "productsDB");
+  const productImagesBusket = ref(storageFirebase, `empresa/`);
   const [product, setproduct] = useState(dataProduct);
-
-  console.log(editProduct);
-
-  useEffect(() => {
-    if (editProduct) {
-      setproduct(editProduct);
-    }
-  }, [editProduct]);
 
   // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
   const [imageUpLoad, setImageUpLoad] = useState(null);
-  const bucketFirebase = ref(storageFirebase, `empresa/`);
   const generateID = Math.random().toString(20).substr(2, 9);
   const [changeImage, setChangeImage] = useState(false);
   const [prewImage, setprewImage] = useState(null);
   // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
 
+  console.log(prewImage);
+
   const newProduct = async (e: any) => {
     e.preventDefault();
     try {
-      if (imageUpLoad === null) return;
-      const imageRef = ref(bucketFirebase, `${generateID}`);
+      //if (imageUpLoad === null) return;
 
-      uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
-        console.log("Uploaded complete!");
-        getDownloadURL(imageRef).then(async (url) => {
-          console.log(url);
-          new Promise((resolve, reject) => {
-            resolve(
-              setDoc(doc(productBaseFirebase, product.barcode), {
-                barcode: product.barcode,
-                name: product.name,
-                brand: product.brand,
-                description: product.description,
-                desc: product.desc,
-                price: product.price,
-                stock: product.stock,
-                refImage: generateID,
-                image: url,
-                Date: DateNowFormat,
-              })
-            );
-            closeMProduct();
-          });
-        });
-      });
+      if (changeImage === true) {
+        alert("editando imagen");
+
+        // // obteber url de la imagen
+        // const imageOld = ref(productImagesBusket, `${editProduct.refImage}`);
+        // deleteObject(imageOld);
+
+        // // subir la nueva imagen
+        // const imageRef = ref(productImagesBusket, `${generateID}`);
+        // uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+        //   console.log("Uploaded complete!");
+        //   getDownloadURL(imageRef).then(async (url) => {
+        //     console.log(url);
+        //     new Promise((resolve, reject) => {
+        //       resolve(
+        //         setDoc(doc(productBaseFirebase, product.barcode), {
+        //           barcode: product.barcode,
+        //           name: product.name,
+        //           brand: product.brand,
+        //           description: product.description,
+        //           desc: product.desc,
+        //           price: product.price,
+        //           stock: product.stock,
+        //           refImage: generateID,
+        //           image: editProduct.refImage,
+        //           Date: DateNowFormat,
+        //         })
+        //       );
+        //       closeMProduct();
+        //       setChangeImage(false);
+        //     });
+        //   });
+        // });
+      } else {
+        alert("guardando nuevo producto");
+
+        // const imageRef = ref(productImagesBusket, `${generateID}`);
+        // uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+        //   console.log("Uploaded complete!");
+        //   getDownloadURL(imageRef).then(async (url) => {
+        //     console.log(url);
+        //     new Promise((resolve, reject) => {
+        //       resolve(
+        //         setDoc(doc(productBaseFirebase, product.barcode), {
+        //           barcode: product.barcode,
+        //           name: product.name,
+        //           brand: product.brand,
+        //           description: product.description,
+        //           desc: product.desc,
+        //           price: product.price,
+        //           stock: product.stock,
+        //           refImage: generateID,
+        //           image: url,
+        //           Date: DateNowFormat,
+        //         })
+        //       );
+        //       closeMProduct();
+        //       setChangeImage(false);
+        //     });
+        //   });
+        // });
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const searchProduct = async (e: any) => {
+    e.preventDefault();
+    try {
+      const docRef = doc(productBaseFirebase, product.barcode);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setproduct(docSnap.data());
+      } else {
+        alert("No existe el producto");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    //setChangeImage(true);
+    if (editProduct) {
+      setproduct(editProduct);
+      setprewImage(editProduct.image);
+      setChangeImage(false);
+    }
+  }, [editProduct]);
+
   // PREVIEW IMAGE ============================================================
   const handleChangeImage = (e: any) => {
     const selectedImage = e.target.files[0];
-    console.log(selectedImage);
     const ALLOWED_TYPES = [
       "image/png",
       "image/jpeg",
@@ -104,6 +159,11 @@ export const ModalCreateProduct = ({
   };
   // PREVIEW IMAGE ============================================================
 
+  const changeImageEdit = () => {
+    console.log("cambiando imagen");
+    setChangeImage(true);
+  };
+
   return (
     <form>
       <Modal
@@ -116,8 +176,13 @@ export const ModalCreateProduct = ({
         </Modal.Header>
         <Modal.Body className="bodyModalProduct">
           <div className="containerImgProduct">
-            <img src={imgProduct} alt="" />
-            <input type="file" name="image" onChange={handleChangeImage} />
+            <img src={changeImage === false ? prewImage : imgProduct} />
+            <input
+              type="file"
+              name="image"
+              onChange={handleChangeImage}
+              onClick={changeImageEdit}
+            />
           </div>
           <div className="containerInputProduct">
             <div className="containerP1">
@@ -129,6 +194,9 @@ export const ModalCreateProduct = ({
                   value={product.barcode}
                   onChange={(e) => handleInputChange(product, setproduct, e)}
                 />
+                <button type="submit" onClick={searchProduct}>
+                  <i className="fa-solid fa-magnifying-glass"></i>
+                </button>
               </div>
 
               <div>
