@@ -36,74 +36,73 @@ export const ModalCreateProduct = ({
   const [prewImage, setprewImage] = useState(null);
   // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
 
-  console.log(prewImage);
-
   const newProduct = async (e: any) => {
     e.preventDefault();
+    if (imageUpLoad === null) return;
     try {
       //if (imageUpLoad === null) return;
 
       if (changeImage === true) {
-        alert("editando imagen");
+        //alert("editando imagen");
 
-        // // obteber url de la imagen
-        // const imageOld = ref(productImagesBusket, `${editProduct.refImage}`);
-        // deleteObject(imageOld);
+        // obteber url de la imagen
+        const imageOld = ref(productImagesBusket, `${editProduct.refImage}`);
+        deleteObject(imageOld);
 
-        // // subir la nueva imagen
-        // const imageRef = ref(productImagesBusket, `${generateID}`);
-        // uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
-        //   console.log("Uploaded complete!");
-        //   getDownloadURL(imageRef).then(async (url) => {
-        //     console.log(url);
-        //     new Promise((resolve, reject) => {
-        //       resolve(
-        //         setDoc(doc(productBaseFirebase, product.barcode), {
-        //           barcode: product.barcode,
-        //           name: product.name,
-        //           brand: product.brand,
-        //           description: product.description,
-        //           desc: product.desc,
-        //           price: product.price,
-        //           stock: product.stock,
-        //           refImage: generateID,
-        //           image: editProduct.refImage,
-        //           Date: DateNowFormat,
-        //         })
-        //       );
-        //       closeMProduct();
-        //       setChangeImage(false);
-        //     });
-        //   });
-        // });
+        // subir la nueva imagen
+        const imageRef = ref(productImagesBusket, `${generateID}`);
+        uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+          console.log("Uploaded complete!");
+          getDownloadURL(imageRef).then(async (url) => {
+            console.log(url);
+            new Promise((resolve, reject) => {
+              resolve(
+                setDoc(doc(productBaseFirebase, product.barcode), {
+                  barcode: product.barcode,
+                  name: product.name,
+                  brand: product.brand,
+                  description: product.description,
+                  desc: product.desc,
+                  price: product.price,
+                  stock: product.stock,
+                  refImage: generateID,
+                  image: url,
+                  Date: DateNowFormat,
+                })
+              );
+              closeMProduct();
+              setChangeImage(false);
+            });
+          });
+        });
       } else {
-        alert("guardando nuevo producto");
-
-        // const imageRef = ref(productImagesBusket, `${generateID}`);
-        // uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
-        //   console.log("Uploaded complete!");
-        //   getDownloadURL(imageRef).then(async (url) => {
-        //     console.log(url);
-        //     new Promise((resolve, reject) => {
-        //       resolve(
-        //         setDoc(doc(productBaseFirebase, product.barcode), {
-        //           barcode: product.barcode,
-        //           name: product.name,
-        //           brand: product.brand,
-        //           description: product.description,
-        //           desc: product.desc,
-        //           price: product.price,
-        //           stock: product.stock,
-        //           refImage: generateID,
-        //           image: url,
-        //           Date: DateNowFormat,
-        //         })
-        //       );
-        //       closeMProduct();
-        //       setChangeImage(false);
-        //     });
-        //   });
-        // });
+        setChangeImage(false);
+        //alert("guardando nuevo producto");
+        const imageRef = ref(productImagesBusket, `${generateID}`);
+        uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+          console.log("Uploaded complete!");
+          getDownloadURL(imageRef).then(async (url) => {
+            console.log(url);
+            new Promise((resolve, reject) => {
+              resolve(
+                setDoc(doc(productBaseFirebase, product.barcode), {
+                  barcode: product.barcode,
+                  name: product.name,
+                  brand: product.brand,
+                  description: product.description,
+                  desc: product.desc,
+                  price: product.price,
+                  stock: product.stock,
+                  refImage: generateID,
+                  image: imageUpLoad === null ? editProduct.image : url,
+                  Date: DateNowFormat,
+                })
+              );
+              closeMProduct();
+              setChangeImage(false);
+            });
+          });
+        });
       }
     } catch (error) {
       console.log(error);
@@ -160,7 +159,6 @@ export const ModalCreateProduct = ({
   // PREVIEW IMAGE ============================================================
 
   const changeImageEdit = () => {
-    console.log("cambiando imagen");
     setChangeImage(true);
   };
 
