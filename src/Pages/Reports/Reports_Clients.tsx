@@ -1,17 +1,20 @@
 import { collection, getDocs } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase } from "../../firebase/firebase";
 import { useModal } from "../../Hook/useModal";
-import { getReportClients } from "../../store/slices/reports";
+import {
+  deleteClient,
+  getClients,
+  getOneClient,
+} from "../../store/slices/clients";
 import { ModalCreateClient } from "../Modal/ModalClient";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Clients = () => {
-  const [clients, setClients] = useState({});
   const [isOpenMClient, openMClient, closeMClient]: any = useModal();
   const dataFirebase = collection(dbFirebase, "clientsDB");
-  const { reportClients = [] } = useSelector((state: any) => state.reports);
+  const { clients = [] } = useSelector((state: any) => state.clients);
   const dispath = useDispatch();
 
   const fetchData = async () => {
@@ -26,7 +29,7 @@ const Reports_Clients = () => {
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
-    dispath(getReportClients(data));
+    dispath(getClients(data));
   };
 
   useEffect(() => {
@@ -34,8 +37,14 @@ const Reports_Clients = () => {
   }, []);
 
   const openEditClient = (item: any) => {
-    setClients(item);
     openMClient();
+    dispath(getOneClient(item));
+    fetchData();
+  };
+
+  const deleteClientDB = (item: any) => {
+    dispath(deleteClient(item));
+    fetchData();
   };
 
   return (
@@ -53,7 +62,7 @@ const Reports_Clients = () => {
         </ul>
       </div>
       <div className="bodyTable">
-        {reportClients.map((item: any) => (
+        {clients.map((item: any) => (
           <ul key={item.id}>
             <li>{item.id} </li>
             <li>
@@ -67,17 +76,16 @@ const Reports_Clients = () => {
                 className="fa-solid fa-eye"
                 onClick={() => openEditClient(item)}
               ></i>
-              <i className="fa-solid fa-trash-can"></i>
+              <i
+                className="fa-solid fa-trash-can"
+                onClick={() => deleteClientDB(item)}
+              ></i>
             </div>
           </ul>
         ))}
       </div>
 
-      <ModalCreateClient
-        editClient={clients}
-        isOpenMClient={isOpenMClient}
-        closeMClient={closeMClient}
-      />
+      <ModalCreateClient />
     </div>
   );
 };

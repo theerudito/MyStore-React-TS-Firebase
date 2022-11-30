@@ -6,35 +6,26 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase, storageFirebase } from "../../firebase/firebase";
+import { dbFirebase } from "../../firebase/firebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
 import { dataClient, dataClientFinal } from "../../Helpers/initial_Values";
+import { createClient, searchDNI } from "../../store/slices/clients";
 
-export const ModalCreateClient = ({
-  isOpenMClient,
-  closeMClient,
-  editClient,
-}: any) => {
+export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
   const state: any = useSelector((state: any) => state.account.nameBusiness);
+  const { oneClient = {} } = useSelector((state: any) => state.clients);
   const clientFirebaseDB = collection(dbFirebase, "clientsDB");
   const [client, setClient] = useState(dataClient);
-  const [searchClient, setSearchClient] = useState(false);
   const [clientFinal, setClientFinal] = useState(dataClientFinal);
-
-  useEffect(() => {
-    if (editClient) {
-      setClient(editClient);
-    }
-  }, [editClient]);
+  const distpach = useDispatch();
 
   const newClient = async (e: any) => {
-    e.preventDefault();
+    e.preventDefault(); 
 
     try {
       // create new client
@@ -49,11 +40,7 @@ export const ModalCreateClient = ({
         email,
         Date: DateNowFormat,
       };
-      if (searchClient === true) {
-        await updateDoc(doc(clientFirebaseDB, client.ci), newClient);
-      } else {
-        await setDoc(doc(clientFirebaseDB, client.ci), newClient);
-      }
+      distpach(createClient(newClient));
       closeMClient();
     } catch (error) {
       console.log(error);
@@ -68,13 +55,19 @@ export const ModalCreateClient = ({
     if (docSnap.exists()) {
       console.log("El Cliente ya Existe");
       setClient(docSnap.data());
-      setSearchClient(true);
+      distpach(searchDNI(true));
     } else {
       console.log("El Cliente no Existe");
-      setSearchClient(false);
+      distpach(searchDNI(false));
       setClient(clientFinal);
     }
   };
+
+  useEffect(() => {
+    if (oneClient) {
+      setClient(oneClient);
+    }
+  }, [oneClient]);
 
   return (
     <form>

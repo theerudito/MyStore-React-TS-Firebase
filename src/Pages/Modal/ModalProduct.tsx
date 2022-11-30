@@ -14,96 +14,81 @@ import {
 } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase, storageFirebase } from "../../firebase/firebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
 import { dataProduct } from "../../Helpers/initial_Values";
+import { createNewProduct } from "../../store/slices/products";
 
-export const ModalCreateProduct = ({
-  isOpenMProduct,
-  closeMProduct,
-  editProduct,
-}: any) => {
-  const productBaseFirebase = collection(dbFirebase, "productsDB");
-  const productImagesBusket = ref(storageFirebase, `empresa/`);
+export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   const [product, setproduct] = useState(dataProduct);
+  const { oneProduct = {} } = useSelector((state: any) => state.products);
+  const distpatch = useDispatch();
 
   // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
   const [imageUpLoad, setImageUpLoad] = useState(null);
-  const generateID = Math.random().toString(20).substr(2, 9);
   const [changeImage, setChangeImage] = useState(false);
   const [prewImage, setprewImage] = useState(null);
+  const [updateProduct, setUpdateProduct] = useState(false);
   // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
 
-  const newProduct = async (e: any) => {
+  const createProductFirebase = async (e: any) => {
     e.preventDefault();
     if (imageUpLoad === null) return;
     try {
-      //if (imageUpLoad === null) return;
+      distpatch(createNewProduct(product));
+      closeMProduct();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-      if (changeImage === true) {
-        //alert("editando imagen");
-
-        // obteber url de la imagen
-        const imageOld = ref(productImagesBusket, `${editProduct.refImage}`);
-        deleteObject(imageOld);
-
-        // subir la nueva imagen
-        const imageRef = ref(productImagesBusket, `${generateID}`);
-        uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
-          console.log("Uploaded complete!");
-          getDownloadURL(imageRef).then(async (url) => {
-            console.log(url);
-            new Promise((resolve, reject) => {
-              resolve(
-                setDoc(doc(productBaseFirebase, product.barcode), {
-                  barcode: product.barcode,
-                  name: product.name,
-                  brand: product.brand,
-                  description: product.description,
-                  desc: product.desc,
-                  price: product.price,
-                  stock: product.stock,
-                  refImage: generateID,
-                  image: url,
-                  Date: DateNowFormat,
-                })
-              );
-              closeMProduct();
-              setChangeImage(false);
-            });
-          });
-        });
-      } else {
-        setChangeImage(false);
-        //alert("guardando nuevo producto");
-        const imageRef = ref(productImagesBusket, `${generateID}`);
-        uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
-          console.log("Uploaded complete!");
-          getDownloadURL(imageRef).then(async (url) => {
-            console.log(url);
-            new Promise((resolve, reject) => {
-              resolve(
-                setDoc(doc(productBaseFirebase, product.barcode), {
-                  barcode: product.barcode,
-                  name: product.name,
-                  brand: product.brand,
-                  description: product.description,
-                  desc: product.desc,
-                  price: product.price,
-                  stock: product.stock,
-                  refImage: generateID,
-                  image: imageUpLoad === null ? editProduct.image : url,
-                  Date: DateNowFormat,
-                })
-              );
-              closeMProduct();
-              setChangeImage(false);
-            });
-          });
-        });
-      }
+  const updateProductFirebase = async (e: any) => {
+    e.preventDefault();
+    try {
+      // if (imageUpLoad === null) {
+      //   updateDoc(doc(productBaseFirebase, product.barcode), {
+      //     barcode: product.barcode,
+      //     name: product.name,
+      //     brand: product.brand,
+      //     description: product.description,
+      //     desc: product.desc,
+      //     price: product.price,
+      //     stock: product.stock,
+      //     Date: DateNowFormat,
+      //   });
+      //   closeMProduct();
+      // } else {
+      //   const imageOld = ref(productImagesBusket, `${oneProduct.refImage}`);
+      //   deleteObject(imageOld);
+      //   const imageRef = ref(productImagesBusket, `${generateID}`);
+      //   uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+      //     console.log("Uploaded complete!");
+      //     getDownloadURL(imageRef).then(async (url) => {
+      //       console.log(url);
+      //       new Promise((resolve, reject) => {
+      //         resolve(
+      //           setDoc(doc(productBaseFirebase, product.barcode), {
+      //             barcode: product.barcode,
+      //             name: product.name,
+      //             brand: product.brand,
+      //             description: product.description,
+      //             desc: product.desc,
+      //             price: product.price,
+      //             stock: product.stock,
+      //             refImage: generateID,
+      //             image: url,
+      //             Date: DateNowFormat,
+      //           })
+      //         );
+      //         closeMProduct();
+      //         setChangeImage(false);
+      //       });
+      //     });
+      //   });
+      //}
     } catch (error) {
       console.log(error);
     }
@@ -125,13 +110,13 @@ export const ModalCreateProduct = ({
   };
 
   useEffect(() => {
-    //setChangeImage(true);
-    if (editProduct) {
-      setproduct(editProduct);
-      setprewImage(editProduct.image);
+    setChangeImage(true);
+    if (oneProduct) {
+      setproduct(oneProduct);
+      setprewImage(oneProduct.image);
       setChangeImage(false);
     }
-  }, [editProduct]);
+  }, [oneProduct]);
 
   // PREVIEW IMAGE ============================================================
   const handleChangeImage = (e: any) => {
@@ -148,7 +133,7 @@ export const ModalCreateProduct = ({
       let reader = new FileReader();
       reader.onloadend = () => {
         setImageUpLoad(selectedImage);
-        setChangeImage(true);
+        setChangeImage(false);
         setprewImage(reader.result);
       };
       reader.readAsDataURL(selectedImage);
@@ -160,6 +145,7 @@ export const ModalCreateProduct = ({
 
   const changeImageEdit = () => {
     setChangeImage(true);
+    setprewImage(null);
   };
 
   return (
@@ -265,8 +251,9 @@ export const ModalCreateProduct = ({
             <button className="btn1" onClick={closeMProduct}>
               Close
             </button>
-            <button className="btn2" onClick={newProduct}>
-              Save Changes
+
+            <button className="btn2" onClick={createProductFirebase}>
+              Save Product
             </button>
           </div>
         </Modal.Body>

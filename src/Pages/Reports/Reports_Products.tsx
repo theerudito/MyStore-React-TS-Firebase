@@ -1,21 +1,26 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase } from "../../firebase/firebase";
+import { dbFirebase, storageFirebase } from "../../firebase/firebase";
 import { useModal } from "../../Hook/useModal";
-import { getReportProducts } from "../../store/slices/reports";
+import {
+  deleteProduct,
+  getOneProduct,
+  getProducts,
+} from "../../store/slices/products";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Products = () => {
   const dispath = useDispatch();
-  const dataFirebase = collection(dbFirebase, "productsDB");
-  const { reportProducts = [] } = useSelector((state: any) => state.reports);
+  const productBaseFirebase = collection(dbFirebase, "productsDB");
+  const { products } = useSelector((state: any) => state.products);
   const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
   const [product, setProduct] = useState({});
 
   const fetchData = async () => {
-    const data = await getDocs(dataFirebase)
+    const data = await getDocs(productBaseFirebase)
       .then((querySnapshot) => {
         const data: any = [];
         querySnapshot.forEach((doc) => {
@@ -26,7 +31,7 @@ const Reports_Products = () => {
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
-    dispath(getReportProducts(data));
+    dispath(getProducts(data));
   };
 
   useEffect(() => {
@@ -34,8 +39,13 @@ const Reports_Products = () => {
   }, []);
 
   const openEditProduct = (item: any) => {
-    setProduct(item);
+    dispath(getOneProduct(item));
     openMProduct();
+  };
+
+  const deleteProductID = async (item: any) => {
+    dispath(deleteProduct(item));
+    fetchData();
   };
 
   return (
@@ -53,7 +63,7 @@ const Reports_Products = () => {
         </ul>
       </div>
       <div className="bodyTable">
-        {reportProducts.map((item: any) => (
+        {products.map((item: any) => (
           <ul key={item.barcode}>
             <li>{item.barcode} </li>
             <li> {item.stock}</li>
@@ -67,7 +77,10 @@ const Reports_Products = () => {
                 className="fa-solid fa-eye"
                 onClick={() => openEditProduct(item)}
               ></i>
-              <i className="fa-solid fa-trash-can"></i>
+              <i
+                className="fa-solid fa-trash-can"
+                onClick={() => deleteProductID(item)}
+              ></i>
             </div>
           </ul>
         ))}
