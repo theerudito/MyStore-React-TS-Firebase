@@ -29,7 +29,6 @@ export const Cart = () => {
   const [ivaCompany, setIvaCompany] = useState(0);
   const [numDocuFac, setNumDocuFac] = useState(0);
   const [dateDocument, setDateDocument] = useState(DateNowFormat);
-  console.log(dateDocument);
 
   const getCompanyIva = async () => {
     const ivaCompany: any = await getNumIvaCompany();
@@ -39,7 +38,10 @@ export const Cart = () => {
 
   const setDocumentCompany = async () => {
     const Document = doc(CompanyBD, "1721457495");
-    await updateDoc(Document, { numfactura: numDocuFac + 1 });
+    // sumar 1 al numero de factura ejemplo 0000001 + 1 = 0000002
+    const numFactura = Number(numDocuFac) + 1;
+
+    await updateDoc(Document, { numfactura: numFactura });
   };
 
   const generateID = Math.random().toString(20).substr(2, 9);

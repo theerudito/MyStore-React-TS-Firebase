@@ -12,95 +12,147 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
+
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase } from "../../firebase/firebase";
+import { dbFirebase, storageFirebase } from "../../firebase/firebase";
+import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
-import { imgClient, imgProduct } from "../../Helpers/imgControls";
+import { imgProduct } from "../../Helpers/imgControls";
 import { dataProduct } from "../../Helpers/initial_Values";
 import {
   changeImageProduct,
-  createNewProduct,
   editProduct,
-  isEditProduct,
   isSaveProduct,
   prewImageProduct,
   searchProductDB,
-  uploadImageProduct,
 } from "../../store/slices/products";
 
 export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   const [product, setproduct] = useState(dataProduct);
+
+  const productBaseFirebase = collection(dbFirebase, "productsDB");
+  const productImagesBusket = ref(storageFirebase, `empresa/`);
+  const generateID = Math.random().toString(20).substr(2, 9);
+
+  const [imageUpLoad, setimageUpLoad] = useState(null);
+  const [changeImage, setchangeImage] = useState(false);
+  const [prewImage, setprewImage] = useState(null);
+  const [editImagen, seteditImagen] = useState(false);
+
   const {
     oneProduct = {},
     updateProduct = false,
     saveProduct = false,
-    changeImage = false,
-    prewImage = null,
-    imageUpLoad = null,
   } = useSelector((state: any) => state.products);
+
   const distpatch = useDispatch();
+
   const clientFirebaseDB = collection(dbFirebase, "productsDB");
 
   const createProductFirebase = async (e: any) => {
     e.preventDefault();
-    if (imageUpLoad === null) return;
     try {
-      closeMProduct();
+      const { barcode, name, brand, description, desc, price, stock } = product;
+
+      if (imageUpLoad === null) return;
+
+      const imageRef = ref(productImagesBusket, `${generateID}`);
+      // guardar la imagen en el storage
+      uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+        console.log("Uploaded complete!");
+        getDownloadURL(imageRef).then(async (url) => {
+          console.log(url);
+          new Promise((resolve, reject) => {
+            resolve(
+              setDoc(doc(productBaseFirebase, barcode), {
+                barcode: barcode,
+                name: name,
+                brand: brand,
+                description: description,
+                desc: desc,
+                price: price,
+                stock: stock,
+                refImage: generateID,
+                image: url,
+                Date: DateNowFormat,
+              })
+            );
+            reject("Error al guardar el producto");
+          });
+          closeMProduct();
+          setproduct(dataProduct);
+          setchangeImage(false);
+        });
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(updateProduct);
-
   const updateProductFirebase = async (e: any) => {
     e.preventDefault();
-
     try {
       distpatch(editProduct(product));
-      // if (imageUpLoad === null) {
-      //   updateDoc(doc(productBaseFirebase, product.barcode), {
-      //     barcode: product.barcode,
-      //     name: product.name,
-      //     brand: product.brand,
-      //     description: product.description,
-      //     desc: product.desc,
-      //     price: product.price,
-      //     stock: product.stock,
-      //     Date: DateNowFormat,
-      //   });
-      //   closeMProduct();
-      // } else {
-      //   const imageOld = ref(productImagesBusket, `${oneProduct.refImage}`);
-      //   deleteObject(imageOld);
-      //   const imageRef = ref(productImagesBusket, `${generateID}`);
-      //   uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
-      //     console.log("Uploaded complete!");
-      //     getDownloadURL(imageRef).then(async (url) => {
-      //       console.log(url);
-      //       new Promise((resolve, reject) => {
-      //         resolve(
-      //           setDoc(doc(productBaseFirebase, product.barcode), {
-      //             barcode: product.barcode,
-      //             name: product.name,
-      //             brand: product.brand,
-      //             description: product.description,
-      //             desc: product.desc,
-      //             price: product.price,
-      //             stock: product.stock,
-      //             refImage: generateID,
-      //             image: url,
-      //             Date: DateNowFormat,
-      //           })
-      //         );
-      //         closeMProduct();
-      //         setChangeImage(false);
-      //       });
-      //     });
-      //   });
-      //}
+      distpatch(isSaveProduct(false));
+      const { barcode, name, brand, description, desc, price, stock } = product;
+
+      // eliminar la imagen anterior
+      if (editImagen) {
+        const imageRef = ref(productImagesBusket, `${oneProduct.refImage}`);
+        deleteDoc(doc(clientFirebaseDB, barcode));
+        deleteObject(imageRef);
+      }
+
+      // sino se eligio una nueva imagen
+      if (imageUpLoad === null) {
+        updateDoc(doc(clientFirebaseDB, barcode), {
+          barcode: barcode,
+          name: name,
+          brand: brand,
+          description: description,
+          desc: desc,
+          price: price,
+          stock: stock,
+          Date: DateNowFormat,
+        });
+        closeMProduct();
+      } else {
+        // si se eligio una nueva imagen se guarda en el storage y se actualiza en la base de datos
+        const imageRef = ref(productImagesBusket, `${generateID}`);
+        uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+          // progeso de la subida de la imagen en el storage
+
+          console.log("Uploaded complete!");
+          getDownloadURL(imageRef).then(async (url) => {
+            console.log(url);
+            new Promise((resolve, reject) => {
+              resolve(
+                updateDoc(doc(clientFirebaseDB, barcode), {
+                  barcode: barcode,
+                  name: name,
+                  brand: brand,
+                  description: description,
+                  desc: desc,
+                  price: price,
+                  stock: stock,
+                  refImage: generateID,
+                  image: url,
+                  Date: DateNowFormat,
+                })
+              );
+              reject("Error al guardar el producto");
+            });
+            closeMProduct();
+            setproduct(dataProduct);
+            setchangeImage(false);
+          });
+        });
+      }
+
+      closeMProduct();
+      setproduct(dataProduct);
     } catch (error) {
       console.log(error);
     }
@@ -121,38 +173,66 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
     distpatch(isSaveProduct(false));
     if (updateProduct === false) {
       setproduct(oneProduct);
-      distpatch(prewImageProduct(oneProduct.urlImage));
+      distpatch(prewImageProduct(oneProduct.image));
       distpatch(isSaveProduct(true));
     }
   }, [oneProduct]);
 
   // PREVIEW IMAGE ============================================================
   const handleChangeImage = (e: any) => {
-    const selectedImage = e.target.files[0];
-    const ALLOWED_TYPES = [
-      "image/png",
-      "image/jpeg",
-      "image/jpg",
-      "image/gif",
-      "image/svg+xml",
-      "image/webp",
-    ];
-    if (selectedImage && ALLOWED_TYPES.includes(selectedImage.type)) {
-      let reader = new FileReader();
-      reader.onloadend = () => {
-        distpatch(uploadImageProduct(selectedImage));
-        distpatch(prewImageProduct(reader.result));
-        distpatch(changeImageProduct(true));
+    const { files } = e.target;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      // enviar imagen a  redux
+      //distpatch(uploadImageProduct(file));
+      setimageUpLoad(file);
+      // previsualizar imagen
+      reader.onload = (e: any) => {
+        //distpatch(prewImageProduct(e.target.result));
+        setprewImage(e.target.result);
       };
-      reader.readAsDataURL(selectedImage);
-    } else {
-      alert("file not supported");
+      reader.readAsDataURL(file);
+      // cambiar estado de imagen
+      //distpatch(changeImageProduct(true));
+      setchangeImage(true);
     }
+
+    // const selectedImage = e.target.files && e.target.files[0];
+    // if (!selectedImage) {
+    //   return;
+    // }
+    // console.log(selectedImage);
+    // const ALLOWED_TYPES = [
+    //   "image/png",
+    //   "image/jpeg",
+    //   "image/jpg",
+    //   "image/gif",
+    //   "image/svg+xml",
+    //   "image/webp",
+    // ];
+    // if (selectedImage && ALLOWED_TYPES.includes(selectedImage.type)) {
+    //   let reader = new FileReader();
+    //   reader.onloadend = () => {
+    //     distpatch(uploadImageProduct(selectedImage));
+    //     distpatch(prewImageProduct(reader.result));
+    //     distpatch(changeImageProduct(true));
+    //   };
+    //   reader.readAsDataURL(selectedImage);
+    // } else {
+    //   alert("file not supported");
+    // }
   };
   // PREVIEW IMAGE ============================================================
 
   const changeImageEdit = () => {
-    distpatch(changeImageProduct(false));
+    console.log("cambiar imagen");
+    // si cambia la imagen
+    if (changeImage) {
+      seteditImagen(true);
+    } else {
+      seteditImagen(false);
+    }
   };
 
   return (
@@ -170,7 +250,8 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
             <img src={changeImage ? prewImage : imgProduct} />
             <input
               type="file"
-              name="image"
+              id="inputImage"
+              accept="image/*"
               onChange={handleChangeImage}
               onClick={changeImageEdit}
             />
@@ -180,6 +261,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
               <div>
                 <label htmlFor="">BarCode</label>
                 <input
+                  required
                   type="search"
                   name="barcode"
                   value={product.barcode}

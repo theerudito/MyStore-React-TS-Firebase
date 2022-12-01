@@ -32,13 +32,85 @@ export const productsSlice = createSlice({
   },
   reducers: {
     createNewProduct: (state, action) => {
-      const { barcode, name, brand, description, desc, price, stock } =
-        action.payload;
-      console.log(action.payload);
-      //const imageRef = ref(productImagesBusket, `${generateID}`);
+      // const { barcode, name, brand, description, desc, price, stock } =
+      //   action.payload;
+      // if (state.imageUpLoad === null) return;
+      // console.log(state.imageUpLoad);
+      // const imageRef = ref(productImagesBusket, `${generateID}`);
+      // // guardar la imagen en el storage
+      // uploadBytes(imageRef, state.imageUpLoad).then((snapshot) => {
+      //   console.log("Uploaded complete!");
+      //   getDownloadURL(imageRef).then(async (url) => {
+      //     console.log(url);
+      //     new Promise((resolve, reject) => {
+      //       resolve(
+      //         setDoc(doc(productBaseFirebase, barcode), {
+      //           barcode: barcode,
+      //           name: name,
+      //           brand: brand,
+      //           description: description,
+      //           desc: desc,
+      //           price: price,
+      //           stock: stock,
+      //           refImage: generateID,
+      //           image: url,
+      //           Date: DateNowFormat,
+      //         })
+      //       );
+      //     });
+      //   });
+      // });
+      // // guardar los datos en el state
+      // state.products = [...state.products, action.payload];
+      // state.saveProduct = true;
+      // state.changeImage = false;
+      // state.prewImage = null;
+      // state.imageUpLoad = null;
     },
+
     editProduct: (state, action) => {
       state.oneProduct = action.payload;
+      // if (imageUpLoad === null) {
+      //   updateDoc(doc(productBaseFirebase, product.barcode), {
+      //     barcode: product.barcode,
+      //     name: product.name,
+      //     brand: product.brand,
+      //     description: product.description,
+      //     desc: product.desc,
+      //     price: product.price,
+      //     stock: product.stock,
+      //     Date: DateNowFormat,
+      //   });
+      //   closeMProduct();
+      // } else {
+      //   const imageOld = ref(productImagesBusket, `${oneProduct.refImage}`);
+      //   deleteObject(imageOld);
+      //   const imageRef = ref(productImagesBusket, `${generateID}`);
+      //   uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
+      //     console.log("Uploaded complete!");
+      //     getDownloadURL(imageRef).then(async (url) => {
+      //       console.log(url);
+      //       new Promise((resolve, reject) => {
+      //         resolve(
+      //           setDoc(doc(productBaseFirebase, product.barcode), {
+      //             barcode: product.barcode,
+      //             name: product.name,
+      //             brand: product.brand,
+      //             description: product.description,
+      //             desc: product.desc,
+      //             price: product.price,
+      //             stock: product.stock,
+      //             refImage: generateID,
+      //             image: url,
+      //             Date: DateNowFormat,
+      //           })
+      //         );
+      //         closeMProduct();
+      //         setChangeImage(false);
+      //       });
+      //     });
+      //   });
+      //}
     },
     isEditProduct: (state, action) => {
       state.updateProduct = action.payload;
@@ -58,11 +130,9 @@ export const productsSlice = createSlice({
       state.changeImage = action.payload;
     },
     uploadImageProduct: (state, action) => {
-      console.log(action.payload);
       state.imageUpLoad = action.payload;
     },
     prewImageProduct: (state, action) => {
-      console.log(action.payload);
       state.prewImage = action.payload;
     },
     searchProductDB: (state, action) => {

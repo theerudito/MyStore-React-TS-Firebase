@@ -39,7 +39,9 @@ const Reports_Products = () => {
   const openEditProduct = (item: any) => {
     openMProduct();
     distpatch(getOneProduct(item));
-    distpatch(isSaveProduct(true));
+    distpatch(isSaveProduct(false));
+    distpatch(isEditProduct(false));
+    distpatch(changeImageProduct(false));
   };
 
   const deleteProductID = async (item: any) => {
