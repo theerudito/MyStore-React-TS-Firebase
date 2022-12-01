@@ -24,6 +24,7 @@ import {
   createNewProduct,
   editProduct,
   isEditProduct,
+  isSaveProduct,
   prewImageProduct,
   searchProductDB,
   uploadImageProduct,
@@ -34,6 +35,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   const {
     oneProduct = {},
     updateProduct = false,
+    saveProduct = false,
     changeImage = false,
     prewImage = null,
     imageUpLoad = null,
@@ -45,14 +47,13 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
     e.preventDefault();
     if (imageUpLoad === null) return;
     try {
-      distpatch(createNewProduct(product));
-      distpatch(isEditProduct(false));
-      distpatch(changeImageProduct(false));
       closeMProduct();
     } catch (error) {
       console.log(error);
     }
   };
+
+  console.log(updateProduct);
 
   const updateProductFirebase = async (e: any) => {
     e.preventDefault();
@@ -100,7 +101,6 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
       //     });
       //   });
       //}
-      distpatch(isEditProduct(false));
     } catch (error) {
       console.log(error);
     }
@@ -118,11 +118,11 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   };
 
   useEffect(() => {
-    distpatch(changeImageProduct(false));
-    if (oneProduct) {
+    distpatch(isSaveProduct(false));
+    if (updateProduct === false) {
       setproduct(oneProduct);
       distpatch(prewImageProduct(oneProduct.urlImage));
-      distpatch(changeImageProduct(true));
+      distpatch(isSaveProduct(true));
     }
   }, [oneProduct]);
 
@@ -141,8 +141,8 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
       let reader = new FileReader();
       reader.onloadend = () => {
         distpatch(uploadImageProduct(selectedImage));
-        distpatch(changeImageProduct(true));
         distpatch(prewImageProduct(reader.result));
+        distpatch(changeImageProduct(true));
       };
       reader.readAsDataURL(selectedImage);
     } else {
@@ -152,7 +152,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   // PREVIEW IMAGE ============================================================
 
   const changeImageEdit = () => {
-    distpatch(changeImageProduct(true));
+    distpatch(changeImageProduct(false));
   };
 
   return (
@@ -167,7 +167,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
         </Modal.Header>
         <Modal.Body className="bodyModalProduct">
           <div className="containerImgProduct">
-            <img src={changeImage === true ? prewImage : imgProduct} />
+            <img src={changeImage ? prewImage : imgProduct} />
             <input
               type="file"
               name="image"
@@ -258,7 +258,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
             <button className="btn1" onClick={closeMProduct}>
               Close
             </button>
-            {updateProduct ? (
+            {saveProduct === true ? (
               <button className="btn2" onClick={updateProductFirebase}>
                 Edit Product
               </button>

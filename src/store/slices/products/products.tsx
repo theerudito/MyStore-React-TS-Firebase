@@ -24,7 +24,8 @@ export const productsSlice = createSlice({
     products: [],
     isLoading: false,
     oneProduct: {},
-    updateProduct: false,
+    updateProduct: true,
+    saveProduct: true,
     changeImage: false,
     prewImage: null,
     imageUpLoad: null,
@@ -41,6 +42,11 @@ export const productsSlice = createSlice({
     },
     isEditProduct: (state, action) => {
       state.updateProduct = action.payload;
+      state.saveProduct = false;
+    },
+    isSaveProduct: (state, action) => {
+      state.saveProduct = action.payload;
+      state.updateProduct = false;
     },
     getProducts: (state, action) => {
       state.products = action.payload;
@@ -83,6 +89,7 @@ export const {
   createNewProduct,
   editProduct,
   isEditProduct,
+  isSaveProduct,
   changeImageProduct,
   searchProductDB,
   prewImageProduct,

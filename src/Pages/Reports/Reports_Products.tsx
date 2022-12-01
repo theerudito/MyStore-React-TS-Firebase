@@ -10,6 +10,7 @@ import {
   getOneProduct,
   getProducts,
   isEditProduct,
+  isSaveProduct,
 } from "../../store/slices/products";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ReportHeader } from "./ReportHeader";
@@ -38,8 +39,7 @@ const Reports_Products = () => {
   const openEditProduct = (item: any) => {
     openMProduct();
     distpatch(getOneProduct(item));
-    distpatch(isEditProduct(true));
-    distpatch(changeImageProduct(true));
+    distpatch(isSaveProduct(true));
   };
 
   const deleteProductID = async (item: any) => {

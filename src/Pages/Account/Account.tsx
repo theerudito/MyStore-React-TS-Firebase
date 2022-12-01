@@ -26,8 +26,7 @@ export const Account = () => {
   const [dataAccount, setDataAccount] = useState(dataConfigStore);
   const [dataDataBase, setDataDataBase] = useState(credentialStore);
   const nameBusinessDB = `${dataDataBase.nameStore}DB`;
-  const distpach = useDispatch();
-
+  const distpatch = useDispatch();
   const dataBaseFirebase = collection(dbFirebase, nameBusinessDB);
 
   const openGOSTORE = () => {
@@ -77,7 +76,7 @@ export const Account = () => {
       codeActivator,
       date: DateNowFormat,
     };
-    distpach(getBusiness(nameBusinessDB));
+    distpatch(getBusiness(nameBusinessDB));
     localStorage.setItem("nameBusinessDB", nameBusinessDB);
 
     try {
