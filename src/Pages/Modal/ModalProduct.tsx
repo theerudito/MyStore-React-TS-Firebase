@@ -15,30 +15,39 @@ import {
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase, storageFirebase } from "../../firebase/firebase";
-import { DateNowFormat } from "../../Helpers/getDate_Hour";
+import { dbFirebase } from "../../firebase/firebase";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
 import { dataProduct } from "../../Helpers/initial_Values";
-import { createNewProduct } from "../../store/slices/products";
+import {
+  changeImageProduct,
+  createNewProduct,
+  editProduct,
+  isEditProduct,
+  prewImageProduct,
+  searchProductDB,
+  uploadImageProduct,
+} from "../../store/slices/products";
 
 export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   const [product, setproduct] = useState(dataProduct);
-  const { oneProduct = {} } = useSelector((state: any) => state.products);
+  const {
+    oneProduct = {},
+    updateProduct = false,
+    changeImage = false,
+    prewImage = null,
+    imageUpLoad = null,
+  } = useSelector((state: any) => state.products);
   const distpatch = useDispatch();
-
-  // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
-  const [imageUpLoad, setImageUpLoad] = useState(null);
-  const [changeImage, setChangeImage] = useState(false);
-  const [prewImage, setprewImage] = useState(null);
-  const [updateProduct, setUpdateProduct] = useState(false);
-  // CONSTAS UPLOAD IMAGE TO FIREBASE ==========================================
+  const clientFirebaseDB = collection(dbFirebase, "productsDB");
 
   const createProductFirebase = async (e: any) => {
     e.preventDefault();
     if (imageUpLoad === null) return;
     try {
       distpatch(createNewProduct(product));
+      distpatch(isEditProduct(false));
+      distpatch(changeImageProduct(false));
       closeMProduct();
     } catch (error) {
       console.log(error);
@@ -47,7 +56,9 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
 
   const updateProductFirebase = async (e: any) => {
     e.preventDefault();
+
     try {
+      distpatch(editProduct(product));
       // if (imageUpLoad === null) {
       //   updateDoc(doc(productBaseFirebase, product.barcode), {
       //     barcode: product.barcode,
@@ -89,6 +100,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
       //     });
       //   });
       //}
+      distpatch(isEditProduct(false));
     } catch (error) {
       console.log(error);
     }
@@ -96,25 +108,21 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
 
   const searchProduct = async (e: any) => {
     e.preventDefault();
-    try {
-      const docRef = doc(productBaseFirebase, product.barcode);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setproduct(docSnap.data());
-      } else {
-        alert("No existe el producto");
-      }
-    } catch (error) {
-      console.log(error);
+    const docRef = getDoc(doc(clientFirebaseDB, product.barcode));
+    const docSnap = await docRef;
+    if (docSnap.exists()) {
+      distpatch(searchProductDB(docSnap.data()));
+    } else {
+      console.log("No existe");
     }
   };
 
   useEffect(() => {
-    setChangeImage(true);
+    distpatch(changeImageProduct(false));
     if (oneProduct) {
       setproduct(oneProduct);
-      setprewImage(oneProduct.image);
-      setChangeImage(false);
+      distpatch(prewImageProduct(oneProduct.urlImage));
+      distpatch(changeImageProduct(true));
     }
   }, [oneProduct]);
 
@@ -132,9 +140,9 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
     if (selectedImage && ALLOWED_TYPES.includes(selectedImage.type)) {
       let reader = new FileReader();
       reader.onloadend = () => {
-        setImageUpLoad(selectedImage);
-        setChangeImage(false);
-        setprewImage(reader.result);
+        distpatch(uploadImageProduct(selectedImage));
+        distpatch(changeImageProduct(true));
+        distpatch(prewImageProduct(reader.result));
       };
       reader.readAsDataURL(selectedImage);
     } else {
@@ -144,8 +152,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   // PREVIEW IMAGE ============================================================
 
   const changeImageEdit = () => {
-    setChangeImage(true);
-    setprewImage(null);
+    distpatch(changeImageProduct(true));
   };
 
   return (
@@ -160,7 +167,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
         </Modal.Header>
         <Modal.Body className="bodyModalProduct">
           <div className="containerImgProduct">
-            <img src={changeImage === false ? prewImage : imgProduct} />
+            <img src={changeImage === true ? prewImage : imgProduct} />
             <input
               type="file"
               name="image"
@@ -251,10 +258,15 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
             <button className="btn1" onClick={closeMProduct}>
               Close
             </button>
-
-            <button className="btn2" onClick={createProductFirebase}>
-              Save Product
-            </button>
+            {updateProduct ? (
+              <button className="btn2" onClick={updateProductFirebase}>
+                Edit Product
+              </button>
+            ) : (
+              <button className="btn2" onClick={createProductFirebase}>
+                Save Product
+              </button>
+            )}
           </div>
         </Modal.Body>
       </Modal>

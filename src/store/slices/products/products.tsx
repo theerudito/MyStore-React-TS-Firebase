@@ -5,6 +5,7 @@ import {
   deleteDoc,
   setDoc,
   getDocs,
+  getDoc,
 } from "firebase/firestore";
 import {
   deleteObject,
@@ -23,47 +24,42 @@ export const productsSlice = createSlice({
     products: [],
     isLoading: false,
     oneProduct: {},
-    createProduct: false,
+    updateProduct: false,
     changeImage: false,
     prewImage: null,
-    updateProduct: false,
     imageUpLoad: null,
   },
   reducers: {
     createNewProduct: (state, action) => {
       const { barcode, name, brand, description, desc, price, stock } =
         action.payload;
-
-      const imageRef = ref(productImagesBusket, `${generateID}`);
-      uploadBytes(imageRef ).then((snapshot) => {
-        console.log("Uploaded complete!");
-        getDownloadURL(imageRef).then(async (url) => {
-          console.log(url);
-          const data = new Promise((resolve, reject) => {
-            resolve(
-              setDoc(doc(productBaseFirebase, barcode), {
-                Date: DateNowFormat,
-                barcode,
-                name,
-                brand,
-                description,
-                desc,
-                price,
-                stock,
-                refImage: generateID,
-                urlImage: url,
-              })
-            );
-          });
-        });
-      });
+      console.log(action.payload);
+      //const imageRef = ref(productImagesBusket, `${generateID}`);
+    },
+    editProduct: (state, action) => {
+      state.oneProduct = action.payload;
+    },
+    isEditProduct: (state, action) => {
+      state.updateProduct = action.payload;
     },
     getProducts: (state, action) => {
-      state.isLoading = true;
       state.products = action.payload;
     },
     getOneProduct: (state, action) => {
+      state.oneProduct = action.payload;
+    },
+    changeImageProduct: (state, action) => {
+      state.changeImage = action.payload;
+    },
+    uploadImageProduct: (state, action) => {
       console.log(action.payload);
+      state.imageUpLoad = action.payload;
+    },
+    prewImageProduct: (state, action) => {
+      console.log(action.payload);
+      state.prewImage = action.payload;
+    },
+    searchProductDB: (state, action) => {
       state.oneProduct = action.payload;
     },
     deleteProduct: (state, action) => {
@@ -80,5 +76,15 @@ export const productsSlice = createSlice({
   },
 });
 
-export const { getProducts, deleteProduct, getOneProduct, createNewProduct } =
-  productsSlice.actions;
+export const {
+  getProducts,
+  deleteProduct,
+  getOneProduct,
+  createNewProduct,
+  editProduct,
+  isEditProduct,
+  changeImageProduct,
+  searchProductDB,
+  prewImageProduct,
+  uploadImageProduct,
+} = productsSlice.actions;

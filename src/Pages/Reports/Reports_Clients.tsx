@@ -85,7 +85,10 @@ const Reports_Clients = () => {
         ))}
       </div>
 
-      <ModalCreateClient />
+      <ModalCreateClient
+        isOpenMClient={isOpenMClient}
+        closeMClient={closeMClient}
+      />
     </div>
   );
 };

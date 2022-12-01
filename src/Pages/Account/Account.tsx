@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getBusiness } from "../../store/slices/account";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ModalCreateClient } from "../Modal/ModalClient";
+import { DateNowFormat } from "../../Helpers/getDate_Hour";
 
 export const Account = () => {
   const navigate = useNavigate();
@@ -26,11 +27,6 @@ export const Account = () => {
   const [dataDataBase, setDataDataBase] = useState(credentialStore);
   const nameBusinessDB = `${dataDataBase.nameStore}DB`;
   const distpach = useDispatch();
-
-
-  // hora y fecha actual
-  const today = new Date();
-  const DateNow = today.toLocaleDateString("en-US");
 
   const dataBaseFirebase = collection(dbFirebase, nameBusinessDB);
 
@@ -79,13 +75,12 @@ export const Account = () => {
       numnotadeventa,
       numproforma,
       codeActivator,
-      date: DateNow,
+      date: DateNowFormat,
     };
     distpach(getBusiness(nameBusinessDB));
     localStorage.setItem("nameBusinessDB", nameBusinessDB);
 
     try {
-      // create new client
       await setDoc(doc(dataBaseFirebase, dataAccount.dni), newBusiness);
     } catch (error) {
       console.log(error);

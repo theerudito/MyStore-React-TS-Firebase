@@ -5,19 +5,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { dbFirebase, storageFirebase } from "../../firebase/firebase";
 import { useModal } from "../../Hook/useModal";
 import {
+  changeImageProduct,
   deleteProduct,
   getOneProduct,
   getProducts,
+  isEditProduct,
 } from "../../store/slices/products";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Products = () => {
-  const dispath = useDispatch();
+  const distpatch = useDispatch();
   const productBaseFirebase = collection(dbFirebase, "productsDB");
   const { products } = useSelector((state: any) => state.products);
   const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
-  const [product, setProduct] = useState({});
 
   const fetchData = async () => {
     const data = await getDocs(productBaseFirebase)
@@ -31,22 +32,24 @@ const Reports_Products = () => {
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
-    dispath(getProducts(data));
+    distpatch(getProducts(data));
+  };
+
+  const openEditProduct = (item: any) => {
+    openMProduct();
+    distpatch(getOneProduct(item));
+    distpatch(isEditProduct(true));
+    distpatch(changeImageProduct(true));
+  };
+
+  const deleteProductID = async (item: any) => {
+    distpatch(deleteProduct(item));
+    fetchData();
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-
-  const openEditProduct = (item: any) => {
-    dispath(getOneProduct(item));
-    openMProduct();
-  };
-
-  const deleteProductID = async (item: any) => {
-    dispath(deleteProduct(item));
-    fetchData();
-  };
 
   return (
     <div className="containerReportProduct">
@@ -86,7 +89,6 @@ const Reports_Products = () => {
         ))}
       </div>
       <ModalCreateProduct
-        editProduct={product}
         isOpenMProduct={isOpenMProduct}
         closeMProduct={closeMProduct}
       />
