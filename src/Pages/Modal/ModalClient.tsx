@@ -1,32 +1,28 @@
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase } from "../../firebase/firebase";
+import { clientsFirebaseDB } from "../../Helpers/firebaseTools";
+import { getDNIClient } from "../../Helpers/getDataFirebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgClient, imgProduct } from "../../Helpers/imgControls";
 import { dataClient, dataClientFinal } from "../../Helpers/initial_Values";
-import { createClient, searchDNI } from "../../store/slices/clients";
+import { searchDNI } from "../../store/slices/clients";
 
 export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
-  const state: any = useSelector((state: any) => state.account.nameBusiness);
-  const { oneClient = {} } = useSelector((state: any) => state.clients);
-  const clientFirebaseDB = collection(dbFirebase, "clientsDB");
+  const {
+    oneClient = {},
+    saveClient = true,
+    seachClientDNI,
+  } = useSelector((state: any) => state.clients);
+
   const [client, setClient] = useState(dataClient);
   const [clientFinal, setClientFinal] = useState(dataClientFinal);
   const distpach = useDispatch();
 
-  const newClient = async (e: any) => {
-    e.preventDefault(); 
-
+  const createClientFirebase = async (e: any) => {
+    e.preventDefault();
     try {
       // create new client
       const { ci, firstName, lastName, phone, direction, city, email } = client;
@@ -40,21 +36,35 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
         email,
         Date: DateNowFormat,
       };
-      distpach(createClient(newClient));
+
+      // save client in firebase
+      if (seachClientDNI === true) {
+        await updateDoc(doc(clientsFirebaseDB, newClient.ci), newClient);
+      } else {
+        await setDoc(doc(clientsFirebaseDB, newClient.ci), newClient);
+      }
       closeMClient();
     } catch (error) {
       console.log(error);
     }
   };
 
+  const updateClientFirebase = async (e: any) => {
+    e.preventDefault();
+    // edit client in firebase
+    await updateDoc(doc(clientsFirebaseDB, client.ci), client);
+    closeMClient();
+  };
+
   const getDNI = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(clientFirebaseDB, client.ci));
+    const docRef = getDoc(doc(clientsFirebaseDB, client.ci));
     const docSnap = await docRef;
-
+    const data = getDNIClient(docSnap.data());
     if (docSnap.exists()) {
       console.log("El Cliente ya Existe");
-      setClient(docSnap.data());
+      distpach(searchDNI(true));
+      setClient(data);
       distpach(searchDNI(true));
     } else {
       console.log("El Cliente no Existe");
@@ -164,9 +174,23 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
             <button className="btn1" onClick={closeMClient}>
               Close
             </button>
-            <button className="btn2" type="submit" onClick={newClient}>
-              Save Changes
-            </button>
+            {saveClient ? (
+              <button
+                className="btn2"
+                type="submit"
+                onClick={createClientFirebase}
+              >
+                Save Client
+              </button>
+            ) : (
+              <button
+                className="btn2"
+                type="submit"
+                onClick={updateClientFirebase}
+              >
+                Edit Client
+              </button>
+            )}
           </div>
         </Modal.Body>
       </Modal>

@@ -1,30 +1,28 @@
-import { collection, getDocs } from "firebase/firestore";
+import { getDocs } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase } from "../../firebase/firebase";
+import { clientsFirebaseDB } from "../../Helpers/firebaseTools";
+import { getDataFirebase } from "../../Helpers/getDataFirebase";
 import { useModal } from "../../Hook/useModal";
 import {
   deleteClient,
   getClients,
   getOneClient,
+  updateClient,
 } from "../../store/slices/clients";
 import { ModalCreateClient } from "../Modal/ModalClient";
 import { ReportHeader } from "./ReportHeader";
 
 const Reports_Clients = () => {
   const [isOpenMClient, openMClient, closeMClient]: any = useModal();
-  const dataFirebase = collection(dbFirebase, "clientsDB");
+
   const { clients = [] } = useSelector((state: any) => state.clients);
   const dispath = useDispatch();
 
   const fetchData = async () => {
-    const data = await getDocs(dataFirebase)
+    const data = await getDocs(clientsFirebaseDB)
       .then((querySnapshot) => {
-        const data: any = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ ...doc.data(), id: doc.id });
-        });
-        return data;
+        return getDataFirebase(querySnapshot);
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
@@ -39,6 +37,7 @@ const Reports_Clients = () => {
   const openEditClient = (item: any) => {
     openMClient();
     dispath(getOneClient(item));
+    dispath(updateClient(false));
     fetchData();
   };
 
@@ -64,7 +63,7 @@ const Reports_Clients = () => {
       <div className="bodyTable">
         {clients.map((item: any) => (
           <ul key={item.id}>
-            <li>{item.id} </li>
+            <li>{item.ci} </li>
             <li>
               {item.firstName} {item.lastName}
             </li>

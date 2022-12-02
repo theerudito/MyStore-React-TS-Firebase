@@ -1,3 +1,5 @@
+import { ICart } from "../interfaces/interfaces";
+
 export const dataConfigStore = {
   nameStore: "",
   propetary: "",
@@ -42,7 +44,7 @@ export const dataProduct = {
   desc: "",
 };
 
-export const dataClient = {
+export const dataClient  = {
   ci: "",
   phone: "",
   firstName: "",
@@ -60,15 +62,6 @@ export const dataClientFinal = {
   direction: "SN",
   email: "email@.com",
   city: "",
-};
-
-export const dataCart = {
-  id: "",
-  phone: "",
-  firstName: "",
-  lastName: "",
-  direction: "",
-  email: "",
 };
 
 export const dataDocument = {

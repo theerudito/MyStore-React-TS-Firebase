@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RouterData } from "../../Routes/Router";
 import { useModal } from "../../Hook/useModal";
+import { useDispatch, useSelector } from "react-redux";
 import {
   imgAvatar,
   imgClient,
@@ -11,13 +12,16 @@ import {
 } from "../../Helpers/imgControls";
 import { credentialStore, dataConfigStore } from "../../Helpers/initial_Values";
 import { handleInputChange } from "../../Helpers/handleChange";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { dbFirebase } from "../../firebase/firebase";
-import { useDispatch, useSelector } from "react-redux";
-import { getBusiness } from "../../store/slices/account";
+import { addDoc, doc, getDoc, setDoc } from "firebase/firestore";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ModalCreateClient } from "../Modal/ModalClient";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
+import {
+  clientsFirebaseDB,
+  dataBaseCompany,
+} from "../../Helpers/firebaseTools";
+import { getDNICompany } from "../../Helpers/getDataFirebase";
+import { searchDNI } from "../../store/slices/clients";
 
 export const Account = () => {
   const navigate = useNavigate();
@@ -26,8 +30,7 @@ export const Account = () => {
   const [dataAccount, setDataAccount] = useState(dataConfigStore);
   const [dataDataBase, setDataDataBase] = useState(credentialStore);
   const nameBusinessDB = `${dataDataBase.nameStore}DB`;
-  const distpatch = useDispatch();
-  const dataBaseFirebase = collection(dbFirebase, nameBusinessDB);
+  const distpach = useDispatch();
 
   const openGOSTORE = () => {
     navigate(RouterData.store);
@@ -47,7 +50,6 @@ export const Account = () => {
 
   const createStore = async (e: any) => {
     e.preventDefault();
-
     const {
       nameStore,
       propetary,
@@ -61,7 +63,7 @@ export const Account = () => {
     } = dataAccount;
     const { dataBase, codeActivator } = dataDataBase;
 
-    const newBusiness = {
+    const newCompany = {
       propetary,
       nameStore,
       dni,
@@ -76,13 +78,28 @@ export const Account = () => {
       codeActivator,
       date: DateNowFormat,
     };
-    distpatch(getBusiness(nameBusinessDB));
-    localStorage.setItem("nameBusinessDB", nameBusinessDB);
 
     try {
-      await setDoc(doc(dataBaseFirebase, dataAccount.dni), newBusiness);
+      await setDoc(doc(dataBaseCompany, newCompany.dni), newCompany);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getDNI_Company = async (e: any) => {
+    e.preventDefault();
+    const docRef = getDoc(doc(clientsFirebaseDB, dataAccount.dni));
+    const docSnap = await docRef;
+    const data = getDNICompany(docSnap.data());
+    if (docSnap.exists()) {
+      console.log("El Cliente ya Existe");
+      distpach(searchDNI(true));
+      setDataAccount(data);
+      setDataDataBase(data);
+      distpach(searchDNI(true));
+    } else {
+      console.log("El Cliente no Existe");
+      distpach(searchDNI(false));
     }
   };
 
@@ -154,13 +171,14 @@ export const Account = () => {
             />
             <label htmlFor="">RUC</label>
             <input
-              type="text"
+              type="search"
               name="dni"
               value={dataAccount.dni}
               onChange={(e) =>
                 handleInputChange(dataAccount, setDataAccount, e)
               }
             />
+            <button onClick={getDNI_Company}>+</button>
           </div>
 
           <div className="input2">

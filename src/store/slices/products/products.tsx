@@ -13,11 +13,12 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { dbFirebase, storageFirebase } from "../../../firebase/firebase";
-import { DateNowFormat } from "../../../Helpers/getDate_Hour";
-const productBaseFirebase = collection(dbFirebase, "productsDB");
-const productImagesBusket = ref(storageFirebase, `empresa/`);
-const generateID = Math.random().toString(20).substr(2, 9);
+import {
+  productsFirebaseDB,
+  productsImagesBusket,
+} from "../../../Helpers/firebaseTools";
+
+
 export const productsSlice = createSlice({
   name: "allProducts",
   initialState: {
@@ -31,87 +32,10 @@ export const productsSlice = createSlice({
     imageUpLoad: null,
   },
   reducers: {
-    createNewProduct: (state, action) => {
-      // const { barcode, name, brand, description, desc, price, stock } =
-      //   action.payload;
-      // if (state.imageUpLoad === null) return;
-      // console.log(state.imageUpLoad);
-      // const imageRef = ref(productImagesBusket, `${generateID}`);
-      // // guardar la imagen en el storage
-      // uploadBytes(imageRef, state.imageUpLoad).then((snapshot) => {
-      //   console.log("Uploaded complete!");
-      //   getDownloadURL(imageRef).then(async (url) => {
-      //     console.log(url);
-      //     new Promise((resolve, reject) => {
-      //       resolve(
-      //         setDoc(doc(productBaseFirebase, barcode), {
-      //           barcode: barcode,
-      //           name: name,
-      //           brand: brand,
-      //           description: description,
-      //           desc: desc,
-      //           price: price,
-      //           stock: stock,
-      //           refImage: generateID,
-      //           image: url,
-      //           Date: DateNowFormat,
-      //         })
-      //       );
-      //     });
-      //   });
-      // });
-      // // guardar los datos en el state
-      // state.products = [...state.products, action.payload];
-      // state.saveProduct = true;
-      // state.changeImage = false;
-      // state.prewImage = null;
-      // state.imageUpLoad = null;
-    },
+    createNewProduct: (state, action) => {},
 
-    editProduct: (state, action) => {
-      state.oneProduct = action.payload;
-      // if (imageUpLoad === null) {
-      //   updateDoc(doc(productBaseFirebase, product.barcode), {
-      //     barcode: product.barcode,
-      //     name: product.name,
-      //     brand: product.brand,
-      //     description: product.description,
-      //     desc: product.desc,
-      //     price: product.price,
-      //     stock: product.stock,
-      //     Date: DateNowFormat,
-      //   });
-      //   closeMProduct();
-      // } else {
-      //   const imageOld = ref(productImagesBusket, `${oneProduct.refImage}`);
-      //   deleteObject(imageOld);
-      //   const imageRef = ref(productImagesBusket, `${generateID}`);
-      //   uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
-      //     console.log("Uploaded complete!");
-      //     getDownloadURL(imageRef).then(async (url) => {
-      //       console.log(url);
-      //       new Promise((resolve, reject) => {
-      //         resolve(
-      //           setDoc(doc(productBaseFirebase, product.barcode), {
-      //             barcode: product.barcode,
-      //             name: product.name,
-      //             brand: product.brand,
-      //             description: product.description,
-      //             desc: product.desc,
-      //             price: product.price,
-      //             stock: product.stock,
-      //             refImage: generateID,
-      //             image: url,
-      //             Date: DateNowFormat,
-      //           })
-      //         );
-      //         closeMProduct();
-      //         setChangeImage(false);
-      //       });
-      //     });
-      //   });
-      //}
-    },
+    editProduct: (state, action) => {},
+    
     isEditProduct: (state, action) => {
       state.updateProduct = action.payload;
       state.saveProduct = false;
@@ -143,10 +67,10 @@ export const productsSlice = createSlice({
       const imgRef = action.payload.refImage;
       state.products.filter((item: any) => item.barcode !== id);
       // delete image from storage
-      const imageOld = ref(productImagesBusket, imgRef);
+      const imageOld = ref(productsImagesBusket, imgRef);
       deleteObject(imageOld);
       // delete product from db
-      const deleteProductFirebase = doc(productBaseFirebase, id);
+      const deleteProductFirebase = doc(productsFirebaseDB, id);
       deleteDoc(deleteProductFirebase);
     },
   },

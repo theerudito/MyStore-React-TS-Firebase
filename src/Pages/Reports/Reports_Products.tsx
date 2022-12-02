@@ -1,8 +1,8 @@
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
-import React, { useEffect, useState } from "react";
+import { getDocs } from "firebase/firestore";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase, storageFirebase } from "../../firebase/firebase";
+import { productsFirebaseDB } from "../../Helpers/firebaseTools";
+import { getDataFirebase } from "../../Helpers/getDataFirebase";
 import { useModal } from "../../Hook/useModal";
 import {
   changeImageProduct,
@@ -17,22 +17,19 @@ import { ReportHeader } from "./ReportHeader";
 
 const Reports_Products = () => {
   const distpatch = useDispatch();
-  const productBaseFirebase = collection(dbFirebase, "productsDB");
+
   const { products } = useSelector((state: any) => state.products);
   const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
 
   const fetchData = async () => {
-    const data = await getDocs(productBaseFirebase)
+    const data = await getDocs(productsFirebaseDB)
       .then((querySnapshot) => {
-        const data: any = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ ...doc.data(), id: doc.id });
-        });
-        return data;
+        return getDataFirebase(querySnapshot);
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
+
     distpatch(getProducts(data));
   };
 

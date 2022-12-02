@@ -1,32 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { dbFirebase } from "../../../firebase/firebase";
-const clientFirebaseDB = collection(dbFirebase, "clientsDB");
+import { addDoc, deleteDoc, doc } from "firebase/firestore";
+import { clientsFirebaseDB } from "../../../Helpers/firebaseTools";
+
 export const clientsSlice = createSlice({
   name: "allClients",
   initialState: {
     clients: [],
     isLoading: false,
     oneClient: {},
-    createnewClient: false,
     seachClientDNI: false,
+    saveClient: true,
   },
   reducers: {
-    createClient: (state, action) => {
-      console.log(action.payload);
-      if (state.seachClientDNI === true) {
-        updateDoc(doc(clientFirebaseDB, action.payload.ci), action.payload);
-      } else {
-        setDoc(doc(clientFirebaseDB, action.payload.ci), action.payload);
-      }
-    },
     searchDNI: (state, action) => {
       state.seachClientDNI = action.payload;
     },
@@ -38,12 +23,13 @@ export const clientsSlice = createSlice({
       state.oneClient = action.payload;
     },
     deleteClient: (state, action) => {
-      const id = action.payload.ci;
-      state.clients.filter((item: any) => item.barcode !== id);
-
-      // delete client from db
-      const deleteProductFirebase = doc(clientFirebaseDB, id);
-      deleteDoc(deleteProductFirebase);
+      const idClient = action.payload.ci;
+      state.clients.filter((item: any) => item.ci !== idClient);
+      const docRef = doc(clientsFirebaseDB, idClient);
+      deleteDoc(docRef);
+    },
+    updateClient: (state, action) => {
+      state.saveClient = action.payload;
     },
   },
 });
@@ -52,6 +38,6 @@ export const {
   getClients,
   deleteClient,
   getOneClient,
-  createClient,
   searchDNI,
+  updateClient,
 } = clientsSlice.actions;

@@ -2,10 +2,16 @@ import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Burger } from "../../Burger/Burger";
-import { dbFirebase } from "../../firebase/firebase";
+
 import { Header } from "../../Header/Header";
+import {
+  cartFirebaseDB,
+  clientsFirebaseDB,
+  dataBaseCompany,
+} from "../../Helpers/firebaseTools";
 import { getNumIvaCompany } from "../../Helpers/getDataFactory";
-import { DateNow, DateNowFormat, HourNow } from "../../Helpers/getDate_Hour";
+import { getDNIClient } from "../../Helpers/getDataFirebase";
+import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgStore } from "../../Helpers/imgControls";
 import {
@@ -14,21 +20,21 @@ import {
   dataDocument,
 } from "../../Helpers/initial_Values";
 import { Waves_Top } from "../../Helpers/Waves";
+import { ICart } from "../../interfaces/interfaces";
 import { deleteCart, getTotalBuy } from "../../store/slices/cart";
+import { searchDNI } from "../../store/slices/clients";
 import { Footer } from "../Footer/Footer";
 
 export const Cart = () => {
   const { cart = [], totalBuy } = useSelector((state: any) => state.cart);
-  const CompanyBD = collection(dbFirebase, "EruditoDB");
-  const cartFirebaseBD = collection(dbFirebase, "cartDB");
-  const clientFirebaseDB = collection(dbFirebase, "clientsDB");
-  const [docuInfor, setDocuInfor] = useState(dataDocument);
-  const [clientInfor, setClientInfor] = useState(dataClient);
+
+  const [client, setClient] = useState(dataClient);
   const [clientFinal, setClientFinal] = useState(dataClientFinal);
-  const [searchClient, setSearchClient] = useState(false);
   const [ivaCompany, setIvaCompany] = useState(0);
   const [numDocuFac, setNumDocuFac] = useState(0);
   const [dateDocument, setDateDocument] = useState(DateNowFormat);
+
+  const { seachClientDNI } = useSelector((state: any) => state.clients);
 
   const getCompanyIva = async () => {
     const ivaCompany: any = await getNumIvaCompany();
@@ -37,10 +43,8 @@ export const Cart = () => {
   };
 
   const setDocumentCompany = async () => {
-    const Document = doc(CompanyBD, "1721457495");
-    // sumar 1 al numero de factura ejemplo 0000001 + 1 = 0000002
+    const Document = doc(dataBaseCompany, "1721457495");
     const numFactura = Number(numDocuFac) + 1;
-
     await updateDoc(Document, { numfactura: numFactura });
   };
 
@@ -48,56 +52,54 @@ export const Cart = () => {
   const distpach = useDispatch();
 
   const subtotal = totalBuy / `1.${ivaCompany}`;
+  const subtotalRedondeado = Number(subtotal.toFixed(2));
   const total = totalBuy;
-  const iva = total - subtotal;
+  const iva = Math.round((totalBuy - subtotal) * 100) / 100;
 
-  const getDNI = async (e: any) => {
-    e.preventDefault();
-    const docRef = getDoc(doc(clientFirebaseDB, clientInfor.ci));
-    const docSnap = await docRef;
-    console.log("data", docSnap.data());
-
-    if (docSnap.exists()) {
-      console.log("El Cliente ya Existe");
-      setClientInfor(docSnap.data());
-      setSearchClient(true);
-    } else {
-      console.log("El Cliente no Existe");
-      setSearchClient(false);
-      setClientInfor(clientFinal);
-    }
-  };
-
-  const newClient = async (e: any) => {
+  const newDataCart = async (e: any) => {
     e.preventDefault();
     setDocumentCompany();
     try {
-      if (searchClient === true) {
-        await setDoc(doc(cartFirebaseBD), {
-          id: generateID,
-          Date: DateNow,
-          Hour: HourNow,
-          DataCard: cart,
-          DataClient: clientInfor,
-          DataDocument: { numDocuFac, dateDocument },
-          TotalBuy: { subtotal, total, iva },
-        });
+      // guardar datos del cliente
+      const dataClient = {
+        ...client,
+        id: generateID,
+        dateDoCument: dateDocument,
+        numfactura: numDocuFac,
+        total: Number(total.toFixed(2)),
+        subtotal: subtotalRedondeado,
+        iva: iva,
+        DataCart: cart,
+        typeDocument: "FACTURA",
+      };
+      // guardar en firebase
+      await setDoc(doc(cartFirebaseDB, generateID), dataClient);
+      // guardar el cliente en firebase
+      if (seachClientDNI === true) {
+        await updateDoc(doc(clientsFirebaseDB, client.ci), client);
       } else {
-        await setDoc(doc(clientFirebaseDB, clientInfor.ci), clientInfor);
-        await setDoc(doc(cartFirebaseBD), {
-          id: generateID,
-          Date: DateNow,
-          Hour: HourNow,
-          DataCard: cart,
-          DataClient: clientInfor,
-          DataDocument: { numDocuFac, dateDocument },
-          TotalBuy: { subtotal, total, iva },
-        });
+        await setDoc(doc(clientsFirebaseDB, client.ci), client);
       }
-
-      // resetear el carrito
+      setClient(client);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getDNI = async (e: any) => {
+    e.preventDefault();
+    const docRef = getDoc(doc(clientsFirebaseDB, client.ci));
+    const docSnap = await docRef;
+    const data = getDNIClient(docSnap.data());
+    if (docSnap.exists()) {
+      console.log("El Cliente ya Existe");
+      distpach(searchDNI(true));
+      setClient(data);
+      distpach(searchDNI(true));
+    } else {
+      console.log("El Cliente no Existe");
+      distpach(searchDNI(false));
+      setClient(clientFinal);
     }
   };
 
@@ -152,10 +154,8 @@ export const Cart = () => {
                 placeholder="CI"
                 className="inputSmall1"
                 name="ci"
-                value={clientInfor.ci}
-                onChange={(e) =>
-                  handleInputChange(clientInfor, setClientInfor, e)
-                }
+                value={client.ci}
+                onChange={(e) => handleInputChange(client, setClient, e)}
               />
               <button onClick={getDNI}>
                 <i className="fa-sharp fa-solid fa-magnifying-glass"></i>
@@ -166,11 +166,9 @@ export const Cart = () => {
                 type="text"
                 placeholder="Phone"
                 className="inputSmall2"
-                value={clientInfor.phone}
+                value={client.phone}
                 name="phone"
-                onChange={(e) =>
-                  handleInputChange(clientInfor, setClientInfor, e)
-                }
+                onChange={(e) => handleInputChange(client, setClient, e)}
               />
             </div>
           </div>
@@ -181,20 +179,16 @@ export const Cart = () => {
               placeholder="First Name"
               className="inputLarge1"
               name="firstName"
-              value={clientInfor.firstName}
-              onChange={(e) =>
-                handleInputChange(clientInfor, setClientInfor, e)
-              }
+              value={client.firstName}
+              onChange={(e) => handleInputChange(client, setClient, e)}
             />
             <input
               type="text"
               placeholder="Last Name"
               className="inputLarge2"
               name="lastName"
-              value={clientInfor.lastName}
-              onChange={(e) =>
-                handleInputChange(clientInfor, setClientInfor, e)
-              }
+              value={client.lastName}
+              onChange={(e) => handleInputChange(client, setClient, e)}
             />
           </div>
 
@@ -204,25 +198,21 @@ export const Cart = () => {
               placeholder="Email"
               className="inputLarge1"
               name="email"
-              value={clientInfor.email}
-              onChange={(e) =>
-                handleInputChange(clientInfor, setClientInfor, e)
-              }
+              value={client.email}
+              onChange={(e) => handleInputChange(client, setClient, e)}
             />
             <input
               type="text"
               placeholder="Direction"
               className="inputLarge2"
               name="direction"
-              value={clientInfor.direction}
-              onChange={(e) =>
-                handleInputChange(clientInfor, setClientInfor, e)
-              }
+              value={client.direction}
+              onChange={(e) => handleInputChange(client, setClient, e)}
             />
           </div>
 
           <div className="containerButton">
-            <button onClick={newClient}>Buy</button>
+            <button onClick={newDataCart}>Buy</button>
           </div>
         </form>
         <div className="InforData">

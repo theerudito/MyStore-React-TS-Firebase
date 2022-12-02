@@ -1,57 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Footer } from "../Footer/Footer";
 import { Waves_Top } from "../../Helpers/Waves";
-import { productArray } from "../../Helpers/initial_Values";
 import { Header } from "../../Header/Header";
 import { Burger } from "../../Burger/Burger";
 import { getProducts } from "../../store/slices/products";
-import { dbFirebase } from "../../firebase/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { getDocs } from "firebase/firestore";
 import { getCart } from "../../store/slices/cart";
+import { getDataFirebase } from "../../Helpers/getDataFirebase";
+import { productsFirebaseDB } from "../../Helpers/firebaseTools";
 
 export const MyStore = () => {
   const dispath = useDispatch();
-  const dataFirebase = collection(dbFirebase, "productsDB");
+
   const { products = [] } = useSelector((state: any) => state.products);
 
-  const arraProducts = () => {
-    dispath(getProducts(productArray));
-  };
-
   const fetchData = async () => {
-    const data = await getDocs(dataFirebase)
+    // enviar la referencia de la coleccion
+    const data = await getDocs(productsFirebaseDB)
       .then((querySnapshot) => {
-        const data: any = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ ...doc.data(), id: doc.id });
-        });
-
-        return data;
+        return getDataFirebase(querySnapshot);
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
-
     dispath(getProducts(data));
   };
 
   // GET DATA FROM FIREBASE ====================================================
-
-  const getAllProduct = () => {
-    if (products) {
-      fetchData();
-    } else {
-      arraProducts();
-    }
-  };
 
   const addToCart = (item: any) => {
     dispath(getCart(item));
   };
 
   useEffect(() => {
-    getAllProduct();
+    fetchData();
   }, []);
 
   return (

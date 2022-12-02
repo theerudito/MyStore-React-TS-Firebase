@@ -1,11 +1,4 @@
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import {
   deleteObject,
   getDownloadURL,
@@ -16,13 +9,17 @@ import {
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { dbFirebase, storageFirebase } from "../../firebase/firebase";
+import {
+  clientsFirebaseDB,
+  productsFirebaseDB,
+  productsImagesBusket,
+} from "../../Helpers/firebaseTools";
+import { getCodeProduct } from "../../Helpers/getDataFirebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgProduct } from "../../Helpers/imgControls";
 import { dataProduct } from "../../Helpers/initial_Values";
 import {
-  changeImageProduct,
   editProduct,
   isSaveProduct,
   prewImageProduct,
@@ -32,10 +29,7 @@ import {
 export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
   const [product, setproduct] = useState(dataProduct);
 
-  const productBaseFirebase = collection(dbFirebase, "productsDB");
-  const productImagesBusket = ref(storageFirebase, `empresa/`);
   const generateID = Math.random().toString(20).substr(2, 9);
-
   const [imageUpLoad, setimageUpLoad] = useState(null);
   const [changeImage, setchangeImage] = useState(false);
   const [prewImage, setprewImage] = useState(null);
@@ -49,8 +43,6 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
 
   const distpatch = useDispatch();
 
-  const clientFirebaseDB = collection(dbFirebase, "productsDB");
-
   const createProductFirebase = async (e: any) => {
     e.preventDefault();
     try {
@@ -58,7 +50,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
 
       if (imageUpLoad === null) return;
 
-      const imageRef = ref(productImagesBusket, `${generateID}`);
+      const imageRef = ref(productsImagesBusket, `${generateID}`);
       // guardar la imagen en el storage
       uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
         console.log("Uploaded complete!");
@@ -66,7 +58,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
           console.log(url);
           new Promise((resolve, reject) => {
             resolve(
-              setDoc(doc(productBaseFirebase, barcode), {
+              setDoc(doc(productsFirebaseDB, barcode), {
                 barcode: barcode,
                 name: name,
                 brand: brand,
@@ -80,10 +72,10 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
               })
             );
             reject("Error al guardar el producto");
+            setproduct(dataProduct);
+            setchangeImage(false);
+            closeMProduct();
           });
-          closeMProduct();
-          setproduct(dataProduct);
-          setchangeImage(false);
         });
       });
     } catch (error) {
@@ -91,23 +83,23 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
     }
   };
 
+  console.log(oneProduct.refImage);
+
   const updateProductFirebase = async (e: any) => {
     e.preventDefault();
     try {
-      distpatch(editProduct(product));
-      distpatch(isSaveProduct(false));
       const { barcode, name, brand, description, desc, price, stock } = product;
 
       // eliminar la imagen anterior
       if (editImagen) {
-        const imageRef = ref(productImagesBusket, `${oneProduct.refImage}`);
-        deleteDoc(doc(clientFirebaseDB, barcode));
+        const imageRef = ref(productsImagesBusket, `${oneProduct.refImage}`);
+        deleteDoc(doc(productsFirebaseDB, barcode));
         deleteObject(imageRef);
       }
 
       // sino se eligio una nueva imagen
       if (imageUpLoad === null) {
-        updateDoc(doc(clientFirebaseDB, barcode), {
+        updateDoc(doc(productsFirebaseDB, barcode), {
           barcode: barcode,
           name: name,
           brand: brand,
@@ -120,16 +112,15 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
         closeMProduct();
       } else {
         // si se eligio una nueva imagen se guarda en el storage y se actualiza en la base de datos
-        const imageRef = ref(productImagesBusket, `${generateID}`);
+        const imageRef = ref(productsImagesBusket, `${generateID}`);
         uploadBytes(imageRef, imageUpLoad).then((snapshot) => {
           // progeso de la subida de la imagen en el storage
-
           console.log("Uploaded complete!");
           getDownloadURL(imageRef).then(async (url) => {
             console.log(url);
             new Promise((resolve, reject) => {
               resolve(
-                updateDoc(doc(clientFirebaseDB, barcode), {
+                updateDoc(doc(clientsFirebaseDB, barcode), {
                   barcode: barcode,
                   name: name,
                   brand: brand,
@@ -139,20 +130,18 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
                   stock: stock,
                   refImage: generateID,
                   image: url,
-                  Date: DateNowFormat,
                 })
               );
               reject("Error al guardar el producto");
+              closeMProduct();
+              setproduct(dataProduct);
+              setchangeImage(false);
+              distpatch(editProduct(product));
+              distpatch(isSaveProduct(false));
             });
-            closeMProduct();
-            setproduct(dataProduct);
-            setchangeImage(false);
           });
         });
       }
-
-      closeMProduct();
-      setproduct(dataProduct);
     } catch (error) {
       console.log(error);
     }
@@ -160,10 +149,12 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
 
   const searchProduct = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(clientFirebaseDB, product.barcode));
+    const docRef = getDoc(doc(clientsFirebaseDB, product.barcode));
     const docSnap = await docRef;
+    const data = getCodeProduct(docSnap);
     if (docSnap.exists()) {
-      distpatch(searchProductDB(docSnap.data()));
+      distpatch(searchProductDB(data));
+      console.log("Document data:", data);
     } else {
       console.log("No existe");
     }
@@ -184,17 +175,11 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const reader = new FileReader();
-      // enviar imagen a  redux
-      //distpatch(uploadImageProduct(file));
       setimageUpLoad(file);
-      // previsualizar imagen
       reader.onload = (e: any) => {
-        //distpatch(prewImageProduct(e.target.result));
         setprewImage(e.target.result);
       };
       reader.readAsDataURL(file);
-      // cambiar estado de imagen
-      //distpatch(changeImageProduct(true));
       setchangeImage(true);
     }
 
