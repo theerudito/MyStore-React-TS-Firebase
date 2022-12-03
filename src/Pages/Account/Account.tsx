@@ -12,7 +12,7 @@ import {
 } from "../../Helpers/imgControls";
 import { credentialStore, dataConfigStore } from "../../Helpers/initial_Values";
 import { handleInputChange } from "../../Helpers/handleChange";
-import { addDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ModalCreateClient } from "../Modal/ModalClient";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
@@ -29,7 +29,7 @@ export const Account = () => {
   const [isOpenMClient, openMClient, closeMClient]: any = useModal();
   const [dataAccount, setDataAccount] = useState(dataConfigStore);
   const [dataDataBase, setDataDataBase] = useState(credentialStore);
-  const nameBusinessDB = `${dataDataBase.nameStore}DB`;
+  const nameBusinessDB = `${dataDataBase.nameDB}DB`;
   const distpach = useDispatch();
 
   const openGOSTORE = () => {
@@ -50,37 +50,44 @@ export const Account = () => {
 
   const createStore = async (e: any) => {
     e.preventDefault();
-    const {
-      nameStore,
-      propetary,
-      dni,
-      direction,
-      iva,
-      coin,
-      numfactura,
-      numnotadeventa,
-      numproforma,
-    } = dataAccount;
-    const { dataBase, codeActivator } = dataDataBase;
-
     const newCompany = {
-      propetary,
-      nameStore,
-      dni,
-      direction,
-      iva,
-      coin,
-      nameBusinessDB,
-      dataBase,
-      numfactura,
-      numnotadeventa,
-      numproforma,
-      codeActivator,
+      nameStore: dataAccount.nameStore,
+      propetary: dataAccount.propetary,
+      dni: dataAccount.dni,
+      direction: dataAccount.direction,
+      iva: dataAccount.iva,
+      currency: dataAccount.current,
+      serie1: dataAccount.serie1,
+      serie2: dataAccount.serie2,
+      numfactura: dataAccount.numfactura,
+      numproforma: dataAccount.numproforma,
+      numnotadeventa: dataAccount.numnotadeventa,
+      codeActivator: dataDataBase.codeActivator,
+      DB: dataDataBase.dataBase,
       date: DateNowFormat,
+      nameDB: nameBusinessDB,
     };
 
     try {
-      await setDoc(doc(dataBaseCompany, newCompany.dni), newCompany);
+      // save data the company in firebase
+      await setDoc(doc(dataBaseCompany, dataAccount.dni), newCompany);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateSecuenceDocument = async (e: any) => {
+    e.preventDefault();
+    try {
+      const newSecuence = {
+        serie1: dataAccount.serie1,
+        serie2: dataAccount.serie2,
+        numfactura: dataAccount.numfactura,
+        numproforma: dataAccount.numproforma,
+        numnotadeventa: dataAccount.numnotadeventa,
+      };
+      // update the secuence of the documents in the company
+      await updateDoc(doc(dataBaseCompany, dataAccount.dni), newSecuence);
     } catch (error) {
       console.log(error);
     }
@@ -88,9 +95,10 @@ export const Account = () => {
 
   const getDNI_Company = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(clientsFirebaseDB, dataAccount.dni));
+    const docRef = getDoc(doc(dataBaseCompany, dataAccount.dni));
     const docSnap = await docRef;
     const data = getDNICompany(docSnap.data());
+    console.log(data);
     if (docSnap.exists()) {
       console.log("El Cliente ya Existe");
       distpach(searchDNI(true));
@@ -211,8 +219,8 @@ export const Account = () => {
           <input
             type="text"
             className="inputCompany"
-            name="nameStore"
-            value={dataDataBase.nameStore}
+            name="nameDB"
+            value={dataDataBase.nameDB}
             onChange={(e) =>
               handleInputChange(dataDataBase, setDataDataBase, e)
             }
@@ -228,7 +236,10 @@ export const Account = () => {
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
           />
 
-          <select name="durrent">
+          <select
+            name="current"
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          >
             <option>Dollar USD</option>
             <option>Peso CO</option>
             <option>EURO EU</option>
@@ -270,7 +281,7 @@ export const Account = () => {
             type="text"
             name="serie1"
             className="inputSerie1"
-            value={dataAccount.numfactura}
+            value={dataAccount.serie1}
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
           />
           <label htmlFor="">SERIE#2</label>
@@ -278,7 +289,7 @@ export const Account = () => {
             type="text"
             name="serie2"
             className="inputSerie2"
-            value={dataAccount.numfactura}
+            value={dataAccount.serie2}
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
           />
           <label htmlFor="">#FACTURA</label>
@@ -305,7 +316,7 @@ export const Account = () => {
             value={dataAccount.numproforma}
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
           />
-          <button>
+          <button onClick={updateSecuenceDocument}>
             <i className="fa-solid fa-floppy-disk"></i>
           </button>
         </div>

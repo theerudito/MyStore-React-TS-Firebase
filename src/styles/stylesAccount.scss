@@ -432,10 +432,12 @@
         }
       }
       select {
+        background-color: #d9d9d9;
+        margin-left: 5px;
         &:focus {
           outline: none;
         }
-        width: 30%;
+        width: 35%;
         height: 30px;
       }
     }
@@ -451,6 +453,7 @@
         margin: auto;
       }
       select {
+        background-color: #d9d9d9;
         &:focus {
           outline: none;
         }
@@ -468,6 +471,7 @@
 
       .inputSerie1 {
         height: 30px;
+        background-color: #d9d9d9;
         width: 50%;
         border: none;
         &:focus {
@@ -475,6 +479,7 @@
         }
       }
       .inputSerie2 {
+        background-color: #d9d9d9;
         height: 30px;
         width: 50%;
         border: none;
@@ -496,6 +501,7 @@
       }
 
       input {
+        background-color: #d9d9d9;
         height: 30px;
         width: 50%;
         border: none;
@@ -551,7 +557,6 @@
   .containerButtonLogout {
     margin: 10px auto;
     width: 90%;
-
     display: flex;
     align-items: center;
     button {

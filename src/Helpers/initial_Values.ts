@@ -6,14 +6,28 @@ export const dataConfigStore = {
   dni: "",
   direction: "",
   iva: "",
-  coin: "",
+  current: {
+    dollar: "USD",
+    pesos: "COP",
+    euro: "EUR",
+  },
+  serie1: "",
+  serie2: "",
   numfactura: "",
   numnotadeventa: "",
   numproforma: "",
 };
 
+export const dataSecuence = {
+  numfactura: 0,
+  numnotadeventa: 0,
+  numproforma: 0,
+  serie1: 0,
+  serie2: 0,
+};
+
 export const credentialStore = {
-  nameStore: "",
+  nameDB: "",
   dataBase: {
     mysql: "mysql",
     mongodb: "mongodb",
@@ -44,7 +58,7 @@ export const dataProduct = {
   desc: "",
 };
 
-export const dataClient  = {
+export const dataClient = {
   ci: "",
   phone: "",
   firstName: "",
@@ -60,8 +74,8 @@ export const dataClientFinal = {
   firstName: "Consumidor",
   lastName: "Final",
   direction: "SN",
-  email: "email@.com",
-  city: "",
+  email: "correo@email.com",
+  city: "Quito",
 };
 
 export const dataDocument = {

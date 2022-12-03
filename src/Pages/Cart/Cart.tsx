@@ -8,8 +8,10 @@ import {
   cartFirebaseDB,
   clientsFirebaseDB,
   dataBaseCompany,
+  DNI_COMPANY,
 } from "../../Helpers/firebaseTools";
-import { getNumIvaCompany } from "../../Helpers/getDataFactory";
+import { GET_COMPANY } from "../../Helpers/getDataFactory";
+
 import { getDNIClient } from "../../Helpers/getDataFirebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
@@ -17,10 +19,9 @@ import { imgStore } from "../../Helpers/imgControls";
 import {
   dataClient,
   dataClientFinal,
-  dataDocument,
+  dataSecuence,
 } from "../../Helpers/initial_Values";
 import { Waves_Top } from "../../Helpers/Waves";
-import { ICart } from "../../interfaces/interfaces";
 import { deleteCart, getTotalBuy } from "../../store/slices/cart";
 import { searchDNI } from "../../store/slices/clients";
 import { Footer } from "../Footer/Footer";
@@ -31,21 +32,21 @@ export const Cart = () => {
   const [client, setClient] = useState(dataClient);
   const [clientFinal, setClientFinal] = useState(dataClientFinal);
   const [ivaCompany, setIvaCompany] = useState(0);
-  const [numDocuFac, setNumDocuFac] = useState(0);
+  const [numDocuFac, setNumDocuFac] = useState<any>(dataSecuence);
   const [dateDocument, setDateDocument] = useState(DateNowFormat);
+  console.log(ivaCompany)
 
   const { seachClientDNI } = useSelector((state: any) => state.clients);
 
   const getCompanyIva = async () => {
-    const ivaCompany: any = await getNumIvaCompany();
-    setIvaCompany(ivaCompany.iva);
-    setNumDocuFac(ivaCompany.numfactura);
-  };
-
-  const setDocumentCompany = async () => {
-    const Document = doc(dataBaseCompany, "1721457495");
-    const numFactura = Number(numDocuFac) + 1;
-    await updateDoc(Document, { numfactura: numFactura });
+    const company: any = await GET_COMPANY();
+    const { numfactura, serie1, serie2, iva } = company;
+    setIvaCompany(iva);
+    setNumDocuFac({
+      numfactura,
+      serie1,
+      serie2,
+    });
   };
 
   const generateID = Math.random().toString(20).substr(2, 9);
@@ -58,14 +59,18 @@ export const Cart = () => {
 
   const newDataCart = async (e: any) => {
     e.preventDefault();
-    setDocumentCompany();
+
     try {
       // guardar datos del cliente
       const dataClient = {
         ...client,
         id: generateID,
-        dateDoCument: dateDocument,
-        numfactura: numDocuFac,
+        dateDocument: dateDocument,
+        numfactura: numDocuFac.numfactura,
+        numnotadeventa: numDocuFac.numnotadeventa,
+        numproforma: numDocuFac.numproforma,
+        serie1: numDocuFac.serie1,
+        serie2: numDocuFac.serie2,
         total: Number(total.toFixed(2)),
         subtotal: subtotalRedondeado,
         iva: iva,
@@ -80,6 +85,13 @@ export const Cart = () => {
       } else {
         await setDoc(doc(clientsFirebaseDB, client.ci), client);
       }
+
+      // actualizar la secuencia de la factura
+      const dataSecuence = {
+        numfactura: numDocuFac.numfactura + 1,
+      };
+      await updateDoc(doc(dataBaseCompany, DNI_COMPANY), dataSecuence);
+
       setClient(client);
     } catch (error) {
       console.log(error);
@@ -110,7 +122,7 @@ export const Cart = () => {
   useEffect(() => {
     getCompanyIva();
     distpach(getTotalBuy(cart));
-  }, [distpach, cart, ivaCompany]);
+  }, [distpach, cart]);
 
   return (
     <div className="containerCart">
@@ -230,14 +242,39 @@ export const Cart = () => {
               <option value="">Factura</option>
               <option value="">Proforma</option>
             </select>
-            <p>#Document {numDocuFac} </p>
-            <input
-              type="number"
-              className="inputDocument"
-              name="numeroDocument"
-              value={numDocuFac}
-              onChange={(e: any) => setNumDocuFac(e.target.value)}
-            />
+            <p>#Document {numDocuFac.numfactura} </p>
+
+            <div className="containerSecuence">
+              <input
+                type="number"
+                className="inputSerie1"
+                name="serie1"
+                value={numDocuFac.serie1}
+                onChange={(e) =>
+                  handleInputChange(numDocuFac, setNumDocuFac, e)
+                }
+              />
+
+              <input
+                type="number"
+                className="inputSerie2"
+                name="serie2"
+                value={numDocuFac.serie2}
+                onChange={(e) =>
+                  handleInputChange(numDocuFac, setNumDocuFac, e)
+                }
+              />
+
+              <input
+                type="number"
+                className="inputNumDocument"
+                name="numeroDocument"
+                value={numDocuFac.numfactura}
+                onChange={(e) =>
+                  handleInputChange(numDocuFac, setNumDocuFac, e)
+                }
+              />
+            </div>
           </div>
           <div className="containerTotal">
             <div className="subtotal12">

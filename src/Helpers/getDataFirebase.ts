@@ -22,3 +22,5 @@ export const getDNICompany = (company: any) => {
   console.log(company);
   return company;
 };
+
+

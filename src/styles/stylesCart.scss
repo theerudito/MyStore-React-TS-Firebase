@@ -315,7 +315,8 @@
           outline: none;
         }
       }
-      .inputDocument {
+
+      .containerSecuence {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -326,10 +327,42 @@
         height: 70px;
         border: none;
         margin-bottom: 10px;
-        &:focus {
-          outline: none;
+
+        .inputNumDocument {
+          background-color: #d9d9d9;
+          // border a la izquierda
+
+          width: 100%;
+          height: 100%;
+          border: none;
+          &:focus {
+            outline: none;
+          }
+        }
+        .inputSerie1 {
+          background-color: #d9d9d9;
+          width: 40px;
+          height: 100%;
+          border: none;
+          // border solo a la derecha
+          border-right: 1px solid black;
+
+          &:focus {
+            outline: none;
+          }
+        }
+        .inputSerie2 {
+          background-color: #d9d9d9;
+          border-right: 1px solid black;
+          width: 50%;
+          height: 100%;
+          border: none;
+          &:focus {
+            outline: none;
+          }
         }
       }
+
       p {
         color: white;
         font-weight: bold;

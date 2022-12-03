@@ -83,8 +83,6 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
     }
   };
 
-  console.log(oneProduct.refImage);
-
   const updateProductFirebase = async (e: any) => {
     e.preventDefault();
     try {

@@ -1,8 +1,10 @@
-import { collection } from "firebase/firestore";
+import { collection, doc, getDoc } from "firebase/firestore";
 import { dbFirebase, storageFirebase } from "../firebase/firebase";
 import { ref } from "firebase/storage";
 
 const company = "EruditoDB";
+
+export const DNI_COMPANY = "1721457495";
 
 export const dataBaseCompany = collection(dbFirebase, company);
 export const productsFirebaseDB = collection(
