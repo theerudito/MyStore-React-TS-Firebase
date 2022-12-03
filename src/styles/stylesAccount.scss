@@ -241,7 +241,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
       user-select: none;
       cursor: pointer;
       &:hover {
@@ -250,31 +249,126 @@
     }
   }
 
+  .containerStore {
+    h4 {
+      margin: auto;
+      display: flex;
+      justify-content: center;
+      color: black;
+    }
+  }
   .containerFormConfig {
     background-color: black;
     width: 80%;
     border-radius: 10px;
-  }
-
-  .contaierCompany1 {
-    width: 90%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin: auto;
-    .input1Company {
+    height: auto;
+    .contaierCompany1 {
+      width: 90%;
       display: flex;
-      width: 100%;
-      height: 30px;
-      .labelNameCompany {
-        width: 200px;
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      .input1Company {
+        display: flex;
+        width: 100%;
+        height: 30px;
+        .labelNameCompany {
+          width: 200px;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+        }
+        .inputNameCompany {
+          background-color: #d9d9d9;
+          width: 400px;
+          border: none;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+
+      .contenedorSearch {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        .labelDNICompany {
+          width: 100px;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+        }
+
+        .inputDNICompany {
+          background-color: #d9d9d9;
+          width: 200px;
+          height: 30px;
+          border: none;
+          &:focus {
+            outline: none;
+          }
+        }
+
+        button {
+          width: 30px;
+          height: 30px;
+          border-radius: 0px 10px 10px 0px;
+          border: none;
+          margin: 10px;
+          margin-left: -10px;
+          background-color: #0099ff;
+          color: white;
+          user-select: none;
+          cursor: pointer;
+          &:hover {
+            background-color: #0066cc;
+          }
+        }
+        i {
+          color: white;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+        }
+      }
+    }
+
+    .contaierCompany2 {
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 90%;
+      .labelDirectionCompany {
+        width: 500px;
+        height: 30px;
         align-items: center;
         justify-content: center;
         display: flex;
       }
-      .inputNameCompany {
+      .inputDirectionCompany {
         background-color: #d9d9d9;
-        width: 400px;
+        height: 30px;
+        width: 80%;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .labelOwnerCompany {
+        width: 500px;
+        height: 30px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+      }
+      .inputOwnerCompany {
+        background-color: #d9d9d9;
+        height: 30px;
+        width: 40%;
         border: none;
         &:focus {
           outline: none;
@@ -282,160 +376,214 @@
       }
     }
 
-    .contenedorSearch {
+    .contaierCompany3 {
+      margin: 10px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      .labelDNICompany {
-        width: 100px;
+      width: 90%;
+      .labelCompany {
+        width: 600px;
+        height: 30px;
         align-items: center;
         justify-content: center;
         display: flex;
       }
-
-      .inputDNICompany {
+      .inputCompany {
         background-color: #d9d9d9;
-        width: 200px;
         height: 30px;
+        width: 80%;
         border: none;
         &:focus {
           outline: none;
         }
       }
+      .labelIvaCompany {
+        width: 200px;
+        height: 30px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+      }
+      .inputIvaCompany {
+        background-color: #d9d9d9;
+        height: 30px;
+        width: 20%;
+        border: none;
+        margin-left: 10px;
+        &:focus {
+          outline: none;
+        }
+      }
+      .labelActivatorCompany {
+        width: 300px;
+        height: 30px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+      }
+      .inputActivatorCompany {
+        background-color: #d9d9d9;
+        height: 30px;
+        width: 50%;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+      select {
+        &:focus {
+          outline: none;
+        }
+        width: 30%;
+        height: 30px;
+      }
+    }
+
+    .contaierCompany4 {
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      width: 40%;
+      margin: auto;
+      p {
+        color: white;
+        margin: auto;
+      }
+      select {
+        &:focus {
+          outline: none;
+        }
+        width: 30%;
+        height: 30px;
+      }
+    }
+
+    .contaierCompany5 {
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      width: 90%;
+      margin: auto;
+
+      .inputSerie1 {
+        height: 30px;
+        width: 50%;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+      .inputSerie2 {
+        height: 30px;
+        width: 50%;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+      .secuenceDocument {
+        width: 100px;
+        &:focus {
+          outline: none;
+        }
+      }
+      label {
+        color: white;
+        margin: auto;
+        font-size: 12px;
+        margin-left: 30px;
+      }
+
+      input {
+        height: 30px;
+        width: 50%;
+        border: none;
+      }
 
       button {
-        width: 30px;
+        background-color: #0099ff;
+        color: white;
+        border: none;
+        width: 400px;
         height: 30px;
         border-radius: 0px 10px 10px 0px;
-        border: none;
-        margin: 10px;
-        margin-left: -10px;
-        background-color: #0099ff;
         color: white;
         user-select: none;
         cursor: pointer;
         &:hover {
           background-color: #0066cc;
         }
+        i {
+          color: white;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+        }
       }
-      i {
+    }
+
+    .containerButton {
+      margin: 20px auto;
+      width: 90%;
+      padding: 10px;
+      button {
+        background-color: #0099ff;
         color: white;
+        border: none;
+        width: 400px;
+        height: 30px;
+        border-radius: 5px;
         align-items: center;
         justify-content: center;
         display: flex;
+        margin: auto;
+        user-select: none;
+        cursor: pointer;
+        margin-top: -10px;
+        &:hover {
+          background-color: #0066cc;
+        }
       }
     }
   }
 
-  .contaierCompany2 {
-    margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 90%;
-
-    .labelDirectionCompany {
-      width: 500px;
-      height: 30px;
-      align-items: center;
-      justify-content: center;
-      display: flex;
-    }
-    .inputDirectionCompany {
-      background-color: #d9d9d9;
-      height: 30px;
-      width: 80%;
-      border: none;
-      &:focus {
-        outline: none;
-      }
-    }
-
-    .labelOwnerCompany {
-      width: 500px;
-      height: 30px;
-      align-items: center;
-      justify-content: center;
-      display: flex;
-    }
-    .inputOwnerCompany {
-      background-color: #d9d9d9;
-      height: 30px;
-      width: 40%;
-      border: none;
-      &:focus {
-        outline: none;
-      }
-    }
-  }
-
-  .contaierCompany3 {
+  .containerButtonLogout {
     margin: 10px auto;
+    width: 90%;
+
     display: flex;
     align-items: center;
-    justify-content: center;
+    button {
+      background-color: #0099ff;
+      color: white;
+      border: none;
+      width: 100px;
+      height: 30px;
+      border-radius: 5px;
+      border-radius: 5px;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      margin: 10px auto;
+      user-select: none;
+      cursor: pointer;
+      &:hover {
+        background-color: #0066cc;
+      }
+    }
+  }
+
+  .containerSecuence {
     width: 90%;
-    .labelCompany {
-      width: 600px;
-      height: 30px;
+    display: flex;
+    margin: auto;
+    h4 {
+      color: white;
+      margin: 10px auto;
       align-items: center;
       justify-content: center;
       display: flex;
     }
-    .inputCompany {
-      background-color: #d9d9d9;
-      height: 30px;
-      width: 80%;
-      border: none;
-      &:focus {
-        outline: none;
-      }
-    }
-    .labelIvaCompany {
-      width: 200px;
-      height: 30px;
-      align-items: center;
-      justify-content: center;
-      display: flex;
-    }
-    .inputIvaCompany {
-      background-color: #d9d9d9;
-      height: 30px;
-      width: 20%;
-      border: none;
-      &:focus {
-        outline: none;
-      }
-    }
-    .labelActivatorCompany {
-      width: 300px;
-      height: 30px;
-      align-items: center;
-      justify-content: center;
-      display: flex;
-    }
-    .inputActivatorCompany {
-      background-color: #d9d9d9;
-      height: 30px;
-      width: 50%;
-      border: none;
-      &:focus {
-        outline: none;
-      }
-    }
-    select {
-      &:focus {
-        outline: none;
-      }
-      width: 30%;
-      height: 30px;
-    }
-  }
-
-  .contaierCompany4 {
-  }
-
-  .contaierCompany5 {
   }
 }

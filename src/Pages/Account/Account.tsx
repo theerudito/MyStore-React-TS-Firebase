@@ -142,6 +142,7 @@ export const Account = () => {
           <button onClick={openReport_Documents}>REPORT DOCUMENTS</button>
         </div>
       </div>
+
       <div className="containerStore">
         <h4>Configuracion Store</h4>
       </div>
@@ -182,7 +183,9 @@ export const Account = () => {
           </div>
         </div>
         <div className="contaierCompany2">
-          <label htmlFor="" className="labelDirectionCompany">DIRECCION</label>
+          <label htmlFor="" className="labelDirectionCompany">
+            DIRECCION
+          </label>
           <input
             type="text"
             className="inputDirectionCompany"
@@ -190,7 +193,9 @@ export const Account = () => {
             value={dataAccount.direction}
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
           />
-          <label htmlFor="" className="labelOwnerCompany">PROPIETARIO</label>
+          <label htmlFor="" className="labelOwnerCompany">
+            PROPIETARIO
+          </label>
           <input
             type="text"
             className="inputOwnerCompany"
@@ -200,7 +205,9 @@ export const Account = () => {
           />
         </div>
         <div className="contaierCompany3">
-          <label htmlFor="" className="labelCompany">EMPRESA_DB</label>
+          <label htmlFor="" className="labelCompany">
+            EMPRESA_DB
+          </label>
           <input
             type="text"
             className="inputCompany"
@@ -210,7 +217,9 @@ export const Account = () => {
               handleInputChange(dataDataBase, setDataDataBase, e)
             }
           />
-          <label htmlFor="" className="labelIvaCompany">IVA</label>
+          <label htmlFor="" className="labelIvaCompany">
+            IVA
+          </label>
           <input
             type="text"
             name="iva"
@@ -225,7 +234,9 @@ export const Account = () => {
             <option>EURO EU</option>
           </select>
 
-          <label htmlFor="" className="labelActivatorCompany">ACTIVATOR</label>
+          <label htmlFor="" className="labelActivatorCompany">
+            ACTIVATOR
+          </label>
           <input
             type="password"
             className="inputActivatorCompany"
@@ -249,9 +260,11 @@ export const Account = () => {
             <option>MONGODB</option>
           </select>
         </div>
+        <div className="containerSecuence">
+          <h4>Config Secuence</h4>
+        </div>
 
         <div className="contaierCompany5">
-          <h4>#Secuence</h4>
           <label htmlFor="">SERIE#1</label>
           <input
             type="text"
@@ -271,13 +284,15 @@ export const Account = () => {
           <label htmlFor="">#FACTURA</label>
           <input
             type="text"
+            className="secuenceDocument"
             name="numfactura"
             value={dataAccount.numfactura}
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
           />
-          <label htmlFor="">#NOTA DE VENTA</label>
+          <label htmlFor="">#NOTA_VENTA</label>
           <input
             type="text"
+            className="secuenceDocument"
             name="numnotadeventa"
             value={dataAccount.numnotadeventa}
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
@@ -285,6 +300,7 @@ export const Account = () => {
           <label htmlFor="">#PROFORMA</label>
           <input
             type="text"
+            className="secuenceDocument"
             name="numproforma"
             value={dataAccount.numproforma}
             onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
