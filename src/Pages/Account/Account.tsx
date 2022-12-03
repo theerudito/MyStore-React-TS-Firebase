@@ -108,7 +108,6 @@ export const Account = () => {
       <div className="containerTitleAccount">
         <h4>Config Account</h4>
       </div>
-
       <div className="containerData">
         <div className="block1">
           <h5>STORE</h5>
@@ -143,161 +142,168 @@ export const Account = () => {
           <button onClick={openReport_Documents}>REPORT DOCUMENTS</button>
         </div>
       </div>
-
       <div className="containerStore">
         <h4>Configuracion Store</h4>
       </div>
 
       <div className="containerFormConfig">
-        <form>
-          <div className="input1">
-            <label htmlFor="name">NOMBRE EMPRESA</label>
+        <div className="contaierCompany1">
+          <div className="input1Company">
+            <label htmlFor="name" className="labelNameCompany">
+              NOMBRE EMPRESA
+            </label>
             <input
               type="text"
               name="nameStore"
+              className="inputNameCompany"
               value={dataAccount.nameStore}
               onChange={(e) =>
                 handleInputChange(dataAccount, setDataAccount, e)
               }
             />
-            <label htmlFor="">PROPIETARIO</label>
-            <input
-              type="text"
-              name="propetary"
-              value={dataAccount.propetary}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
-            />
-            <label htmlFor="">RUC</label>
+          </div>
+
+          <div className="contenedorSearch">
+            <label htmlFor="" className="labelDNICompany">
+              RUC
+            </label>
             <input
               type="search"
               name="dni"
+              className="inputDNICompany"
               value={dataAccount.dni}
               onChange={(e) =>
                 handleInputChange(dataAccount, setDataAccount, e)
               }
             />
-            <button onClick={getDNI_Company}>+</button>
+            <button onClick={getDNI_Company}>
+              <i className="fa-solid fa-magnifying-glass"></i>
+            </button>
           </div>
+        </div>
+        <div className="contaierCompany2">
+          <label htmlFor="" className="labelDirectionCompany">DIRECCION</label>
+          <input
+            type="text"
+            className="inputDirectionCompany"
+            name="direction"
+            value={dataAccount.direction}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
+          <label htmlFor="" className="labelOwnerCompany">PROPIETARIO</label>
+          <input
+            type="text"
+            className="inputOwnerCompany"
+            name="propetary"
+            value={dataAccount.propetary}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
+        </div>
+        <div className="contaierCompany3">
+          <label htmlFor="" className="labelCompany">EMPRESA_DB</label>
+          <input
+            type="text"
+            className="inputCompany"
+            name="nameStore"
+            value={dataDataBase.nameStore}
+            onChange={(e) =>
+              handleInputChange(dataDataBase, setDataDataBase, e)
+            }
+          />
+          <label htmlFor="" className="labelIvaCompany">IVA</label>
+          <input
+            type="text"
+            name="iva"
+            className="inputIvaCompany"
+            value={dataAccount.iva}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
 
-          <div className="input2">
-            <label htmlFor="">DIRECCION</label>
-            <input
-              type="text"
-              name="direction"
-              value={dataAccount.direction}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
-            />
+          <select name="durrent">
+            <option>Dollar USD</option>
+            <option>Peso CO</option>
+            <option>EURO EU</option>
+          </select>
 
-            <label htmlFor="">IVA</label>
-            <input
-              type="text"
-              name="iva"
-              value={dataAccount.iva}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
-            />
+          <label htmlFor="" className="labelActivatorCompany">ACTIVATOR</label>
+          <input
+            type="password"
+            className="inputActivatorCompany"
+            name="codeActivator"
+            value={dataDataBase.codeActivator}
+            onChange={(e) =>
+              handleInputChange(dataDataBase, setDataDataBase, e)
+            }
+          />
+        </div>
+        <div className="contaierCompany4">
+          <p>Selecion El Motor de BDD</p>
+          <select
+            name="dataBase"
+            onChange={(e) =>
+              handleInputChange(dataDataBase, setDataDataBase, e)
+            }
+          >
+            <option>FIREBASE</option>
+            <option>MYSQL</option>
+            <option>MONGODB</option>
+          </select>
+        </div>
 
-            <label htmlFor="">MONEDA</label>
-            <input
-              type="text"
-              name="coin"
-              value={dataAccount.coin}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
-            />
-          </div>
-
-          <div className="containerCretendialCreator">
-            <div className="containerNameCompany">
-              <label htmlFor="">NAME EMPRESA</label>
-              <input
-                type="text"
-                name="nameStore"
-                value={dataDataBase.nameStore}
-                onChange={(e) =>
-                  handleInputChange(dataDataBase, setDataDataBase, e)
-                }
-              />
-            </div>
-
-            <div className="containerSelectorDB">
-              <p>Selecion El Motor de BDD</p>
-              <select
-                name="dataBase"
-                onChange={(e) =>
-                  handleInputChange(dataDataBase, setDataDataBase, e)
-                }
-              >
-                <option>FIREBASE</option>
-                <option>MYSQL</option>
-                <option>MONGODB</option>
-              </select>
-            </div>
-
-            <div className="containerActivator">
-              <label htmlFor="">ACTIVATOR</label>
-              <input
-                type="password"
-                name="codeActivator"
-                value={dataDataBase.codeActivator}
-                onChange={(e) =>
-                  handleInputChange(dataDataBase, setDataDataBase, e)
-                }
-              />
-            </div>
-          </div>
-
-          <div className="containerSecuence">
-            <h4>#Secuence</h4>
-            <label htmlFor="">#FACTURA</label>
-            <input
-              type="text"
-              name="numfactura"
-              value={dataAccount.numfactura}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
-            />
-            <label htmlFor="">#NOTA DE VENTA</label>
-            <input
-              type="text"
-              name="numnotadeventa"
-              value={dataAccount.numnotadeventa}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
-            />
-            <label htmlFor="">#PROFORMA</label>
-            <input
-              type="text"
-              name="numproforma"
-              value={dataAccount.numproforma}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
-            />
-          </div>
-          <div className="containerButton">
-            <button onClick={createStore}>GUARDAR CONFIGURACIONES</button>
-          </div>
-        </form>
+        <div className="contaierCompany5">
+          <h4>#Secuence</h4>
+          <label htmlFor="">SERIE#1</label>
+          <input
+            type="text"
+            name="serie1"
+            className="inputSerie1"
+            value={dataAccount.numfactura}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
+          <label htmlFor="">SERIE#2</label>
+          <input
+            type="text"
+            name="serie2"
+            className="inputSerie2"
+            value={dataAccount.numfactura}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
+          <label htmlFor="">#FACTURA</label>
+          <input
+            type="text"
+            name="numfactura"
+            value={dataAccount.numfactura}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
+          <label htmlFor="">#NOTA DE VENTA</label>
+          <input
+            type="text"
+            name="numnotadeventa"
+            value={dataAccount.numnotadeventa}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
+          <label htmlFor="">#PROFORMA</label>
+          <input
+            type="text"
+            name="numproforma"
+            value={dataAccount.numproforma}
+            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+          />
+          <button>
+            <i className="fa-solid fa-floppy-disk"></i>
+          </button>
+        </div>
+        <div className="containerButton">
+          <button onClick={createStore}>GUARDAR CONFIGURACIONES</button>
+        </div>
       </div>
-
       <div className="containerButtonLogout">
         <button>LOGOUT</button>
       </div>
-
       <ModalCreateProduct
         isOpenMProduct={isOpenMProduct}
         closeMProduct={closeMProduct}
       />
-
       <ModalCreateClient
         isOpenMClient={isOpenMClient}
         closeMClient={closeMClient}
