@@ -16,10 +16,7 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ModalCreateClient } from "../Modal/ModalClient";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
-import {
-  clientsFirebaseDB,
-  dataBaseCompany,
-} from "../../Helpers/firebaseTools";
+import { company_DB } from "../../Helpers/firebaseTools";
 import { getDNICompany } from "../../Helpers/getDataFirebase";
 import { searchDNI } from "../../store/slices/clients";
 
@@ -70,7 +67,7 @@ export const Account = () => {
 
     try {
       // save data the company in firebase
-      await setDoc(doc(dataBaseCompany, dataAccount.dni), newCompany);
+      await setDoc(doc(company_DB, dataAccount.dni), newCompany);
     } catch (error) {
       console.log(error);
     }
@@ -87,7 +84,7 @@ export const Account = () => {
         numnotadeventa: dataAccount.numnotadeventa,
       };
       // update the secuence of the documents in the company
-      await updateDoc(doc(dataBaseCompany, dataAccount.dni), newSecuence);
+      await updateDoc(doc(company_DB, dataAccount.dni), newSecuence);
     } catch (error) {
       console.log(error);
     }
@@ -95,7 +92,7 @@ export const Account = () => {
 
   const getDNI_Company = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(dataBaseCompany, dataAccount.dni));
+    const docRef = getDoc(doc(company_DB, dataAccount.dni));
     const docSnap = await docRef;
     const data = getDNICompany(docSnap.data());
     console.log(data);

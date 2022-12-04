@@ -14,10 +14,9 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import {
-  productsFirebaseDB,
   productsImagesBusket,
+  products_DB,
 } from "../../../Helpers/firebaseTools";
-
 
 export const productsSlice = createSlice({
   name: "allProducts",
@@ -35,7 +34,7 @@ export const productsSlice = createSlice({
     createNewProduct: (state, action) => {},
 
     editProduct: (state, action) => {},
-    
+
     isEditProduct: (state, action) => {
       state.updateProduct = action.payload;
       state.saveProduct = false;
@@ -70,7 +69,7 @@ export const productsSlice = createSlice({
       const imageOld = ref(productsImagesBusket, imgRef);
       deleteObject(imageOld);
       // delete product from db
-      const deleteProductFirebase = doc(productsFirebaseDB, id);
+      const deleteProductFirebase = doc(products_DB, id);
       deleteDoc(deleteProductFirebase);
     },
   },

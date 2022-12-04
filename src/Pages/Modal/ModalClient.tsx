@@ -2,7 +2,7 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { clientsFirebaseDB } from "../../Helpers/firebaseTools";
+import { clients_DB } from "../../Helpers/firebaseTools";
 import { getDNIClient } from "../../Helpers/getDataFirebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
@@ -39,9 +39,9 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
 
       // save client in firebase
       if (seachClientDNI === true) {
-        await updateDoc(doc(clientsFirebaseDB, newClient.ci), newClient);
+        await updateDoc(doc(clients_DB, newClient.ci), newClient);
       } else {
-        await setDoc(doc(clientsFirebaseDB, newClient.ci), newClient);
+        await setDoc(doc(clients_DB, newClient.ci), newClient);
       }
       closeMClient();
     } catch (error) {
@@ -52,13 +52,13 @@ export const ModalCreateClient = ({ isOpenMClient, closeMClient }: any) => {
   const updateClientFirebase = async (e: any) => {
     e.preventDefault();
     // edit client in firebase
-    await updateDoc(doc(clientsFirebaseDB, client.ci), client);
+    await updateDoc(doc(clients_DB, client.ci), client);
     closeMClient();
   };
 
   const getDNI = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(clientsFirebaseDB, client.ci));
+    const docRef = getDoc(doc(clients_DB, client.ci));
     const docSnap = await docRef;
     const data = getDNIClient(docSnap.data());
     if (docSnap.exists()) {

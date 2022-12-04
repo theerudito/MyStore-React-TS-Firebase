@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { addDoc, deleteDoc, doc } from "firebase/firestore";
-import { clientsFirebaseDB } from "../../../Helpers/firebaseTools";
+import { clients_DB } from "../../../Helpers/firebaseTools";
 
 export const clientsSlice = createSlice({
   name: "allClients",
@@ -25,7 +25,7 @@ export const clientsSlice = createSlice({
     deleteClient: (state, action) => {
       const idClient = action.payload.ci;
       state.clients.filter((item: any) => item.ci !== idClient);
-      const docRef = doc(clientsFirebaseDB, idClient);
+      const docRef = doc(clients_DB, idClient);
       deleteDoc(docRef);
     },
     updateClient: (state, action) => {

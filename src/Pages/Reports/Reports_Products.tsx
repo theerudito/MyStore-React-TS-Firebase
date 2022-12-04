@@ -1,7 +1,7 @@
 import { getDocs } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { productsFirebaseDB } from "../../Helpers/firebaseTools";
+import { products_DB } from "../../Helpers/firebaseTools";
 import { getDataFirebase } from "../../Helpers/getDataFirebase";
 import { useModal } from "../../Hook/useModal";
 import {
@@ -22,7 +22,7 @@ const Reports_Products = () => {
   const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
 
   const fetchData = async () => {
-    const data = await getDocs(productsFirebaseDB)
+    const data = await getDocs(products_DB)
       .then((querySnapshot) => {
         return getDataFirebase(querySnapshot);
       })

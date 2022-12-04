@@ -1,7 +1,8 @@
 import { getDocs } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clientsFirebaseDB } from "../../Helpers/firebaseTools";
+import { clients_DB } from "../../Helpers/firebaseTools";
+
 import { getDataFirebase } from "../../Helpers/getDataFirebase";
 import { useModal } from "../../Hook/useModal";
 import {
@@ -20,7 +21,7 @@ const Reports_Clients = () => {
   const dispath = useDispatch();
 
   const fetchData = async () => {
-    const data = await getDocs(clientsFirebaseDB)
+    const data = await getDocs(clients_DB)
       .then((querySnapshot) => {
         return getDataFirebase(querySnapshot);
       })

@@ -1,13 +1,13 @@
-import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Burger } from "../../Burger/Burger";
 
 import { Header } from "../../Header/Header";
 import {
-  cartFirebaseDB,
-  clientsFirebaseDB,
-  dataBaseCompany,
+  cart_DB,
+  clients_DB,
+  company_DB,
   DNI_COMPANY,
 } from "../../Helpers/firebaseTools";
 import { GET_COMPANY } from "../../Helpers/getDataFactory";
@@ -34,7 +34,7 @@ export const Cart = () => {
   const [ivaCompany, setIvaCompany] = useState(0);
   const [numDocuFac, setNumDocuFac] = useState<any>(dataSecuence);
   const [dateDocument, setDateDocument] = useState(DateNowFormat);
-  console.log(ivaCompany)
+  console.log(ivaCompany);
 
   const { seachClientDNI } = useSelector((state: any) => state.clients);
 
@@ -67,8 +67,6 @@ export const Cart = () => {
         id: generateID,
         dateDocument: dateDocument,
         numfactura: numDocuFac.numfactura,
-        numnotadeventa: numDocuFac.numnotadeventa,
-        numproforma: numDocuFac.numproforma,
         serie1: numDocuFac.serie1,
         serie2: numDocuFac.serie2,
         total: Number(total.toFixed(2)),
@@ -78,19 +76,18 @@ export const Cart = () => {
         typeDocument: "FACTURA",
       };
       // guardar en firebase
-      await setDoc(doc(cartFirebaseDB, generateID), dataClient);
+      await setDoc(doc(cart_DB, generateID), dataClient);
       // guardar el cliente en firebase
       if (seachClientDNI === true) {
-        await updateDoc(doc(clientsFirebaseDB, client.ci), client);
+        await updateDoc(doc(clients_DB, client.ci), client);
       } else {
-        await setDoc(doc(clientsFirebaseDB, client.ci), client);
+        await setDoc(doc(clients_DB, client.ci), client);
       }
 
       // actualizar la secuencia de la factura
-      const dataSecuence = {
+      await updateDoc(doc(company_DB, DNI_COMPANY), {
         numfactura: numDocuFac.numfactura + 1,
-      };
-      await updateDoc(doc(dataBaseCompany, DNI_COMPANY), dataSecuence);
+      });
 
       setClient(client);
     } catch (error) {
@@ -100,7 +97,7 @@ export const Cart = () => {
 
   const getDNI = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(clientsFirebaseDB, client.ci));
+    const docRef = getDoc(doc(clients_DB, client.ci));
     const docSnap = await docRef;
     const data = getDNIClient(docSnap.data());
     if (docSnap.exists()) {

@@ -8,7 +8,7 @@ import { getProducts } from "../../store/slices/products";
 import { getDocs } from "firebase/firestore";
 import { getCart } from "../../store/slices/cart";
 import { getDataFirebase } from "../../Helpers/getDataFirebase";
-import { productsFirebaseDB } from "../../Helpers/firebaseTools";
+import { products_DB } from "../../Helpers/firebaseTools";
 
 export const MyStore = () => {
   const dispath = useDispatch();
@@ -17,7 +17,7 @@ export const MyStore = () => {
 
   const fetchData = async () => {
     // enviar la referencia de la coleccion
-    const data = await getDocs(productsFirebaseDB)
+    const data = await getDocs(products_DB)
       .then((querySnapshot) => {
         return getDataFirebase(querySnapshot);
       })

@@ -10,9 +10,9 @@ import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  clientsFirebaseDB,
-  productsFirebaseDB,
+  clients_DB,
   productsImagesBusket,
+  products_DB,
 } from "../../Helpers/firebaseTools";
 import { getCodeProduct } from "../../Helpers/getDataFirebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
@@ -58,7 +58,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
           console.log(url);
           new Promise((resolve, reject) => {
             resolve(
-              setDoc(doc(productsFirebaseDB, barcode), {
+              setDoc(doc(products_DB, barcode), {
                 barcode: barcode,
                 name: name,
                 brand: brand,
@@ -91,13 +91,13 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
       // eliminar la imagen anterior
       if (editImagen) {
         const imageRef = ref(productsImagesBusket, `${oneProduct.refImage}`);
-        deleteDoc(doc(productsFirebaseDB, barcode));
+        deleteDoc(doc(products_DB, barcode));
         deleteObject(imageRef);
       }
 
       // sino se eligio una nueva imagen
       if (imageUpLoad === null) {
-        updateDoc(doc(productsFirebaseDB, barcode), {
+        updateDoc(doc(products_DB, barcode), {
           barcode: barcode,
           name: name,
           brand: brand,
@@ -118,7 +118,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
             console.log(url);
             new Promise((resolve, reject) => {
               resolve(
-                updateDoc(doc(clientsFirebaseDB, barcode), {
+                updateDoc(doc(clients_DB, barcode), {
                   barcode: barcode,
                   name: name,
                   brand: brand,
@@ -147,7 +147,7 @@ export const ModalCreateProduct = ({ isOpenMProduct, closeMProduct }: any) => {
 
   const searchProduct = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(clientsFirebaseDB, product.barcode));
+    const docRef = getDoc(doc(clients_DB, product.barcode));
     const docSnap = await docRef;
     const data = getCodeProduct(docSnap);
     if (docSnap.exists()) {

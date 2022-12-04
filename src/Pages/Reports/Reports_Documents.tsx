@@ -1,7 +1,7 @@
 import { getDocs } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { cartFirebaseDB } from "../../Helpers/firebaseTools";
+import { cart_DB } from "../../Helpers/firebaseTools";
 
 import { getDataFirebase } from "../../Helpers/getDataFirebase";
 import { getCartInfor } from "../../store/slices/cart";
@@ -12,7 +12,7 @@ export const Reports_Documents = () => {
   const { cardInfor = [], total } = useSelector((state: any) => state.cart);
 
   const fetchData = async () => {
-    const data = await getDocs(cartFirebaseDB)
+    const data = await getDocs(cart_DB)
       .then((querySnapshot) => {
         return getDataFirebase(querySnapshot);
       })
@@ -47,8 +47,10 @@ export const Reports_Documents = () => {
             <li>
               {item.firstName} {item.lastName}{" "}
             </li>
-            <li>{item.numfactura} </li>
-            <li>{item.dateDoCument} </li>
+            <li>
+              {item.serie1}-{item.serie2}-{item.numfactura}
+            </li>
+            <li>{item.dateDocument} </li>
             <li>{item.total.toFixed(2)} </li>
             <div className="containerAction">
               <i className="fa-solid fa-eye"></i>
