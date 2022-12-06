@@ -4,35 +4,56 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { dbFirebase } from "../firebase/firebase";
+import { company_DB } from "./firebaseTools";
+import { getDataFirebase } from "./getDataFirebase";
 
 export const apiGET = async () => {
   try {
-    const userDoc: any = collection(dbFirebase, "users");
-    const data = await getDocs(userDoc);
+    const data = await getDocs(userDB)
+      .then((querySnapshot) => {
+        return getDataFirebase(querySnapshot);
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
     return data;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const apiPOST = async (dataUser: any) => {
-  console.log(dataUser.age);
+export const apiGET_ONE = async (id: any) => {
+  console.log("id ", id);
   try {
-    const userDoc: any = collection(dbFirebase, "users");
-    await addDoc(userDoc, { name: dataUser.name, age: Number(dataUser.age) });
+    const data = await getDocs(company_DB)
+      .then((querySnapshot) => {
+        return getDataFirebase(querySnapshot);
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+    const [dataOne]: any = data;
+    return dataOne;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const apiUPDATE = async (id: any, age: any) => {
+export const apiPOST = async (data: any) => {
   try {
-    const userDoc: any = doc(dbFirebase, "users", id);
-    const newAge = { age: age + 1 };
-    await updateDoc(userDoc, newAge);
+    const postData = await setDoc(doc(userDB), data);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+};
+
+export const apiUPDATE = async (data: any) => {
+  try {
+    const updateData = await updateDoc(doc(userDB, data.id), data);
   } catch (error) {
     console.log(error);
   }
@@ -40,8 +61,7 @@ export const apiUPDATE = async (id: any, age: any) => {
 
 export const apiDELETE = async (id: string) => {
   try {
-    const userDoc: any = doc(dbFirebase, "users", id);
-    await deleteDoc(userDoc);
+    const deleteData: any = await deleteDoc(doc(userDB, id));
   } catch (error) {
     console.log(error);
   }

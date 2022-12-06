@@ -19,8 +19,5 @@ export const getCodeProduct = (product: any) => {
 };
 
 export const getDNICompany = (company: any) => {
-  console.log(company);
   return company;
 };
-
-

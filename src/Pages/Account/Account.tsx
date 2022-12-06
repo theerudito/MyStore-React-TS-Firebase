@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RouterData } from "../../Routes/Router";
 import { useModal } from "../../Hook/useModal";
@@ -10,24 +10,22 @@ import {
   imgReports,
   imgStore,
 } from "../../Helpers/imgControls";
-import { credentialStore, dataConfigStore } from "../../Helpers/initial_Values";
-import { handleInputChange } from "../../Helpers/handleChange";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { dataConfigStore } from "../../Helpers/initial_Values";
+import { doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ModalCreateClient } from "../Modal/ModalClient";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
-import { company_DB } from "../../Helpers/firebaseTools";
-import { getDNICompany } from "../../Helpers/getDataFirebase";
-import { searchDNI } from "../../store/slices/clients";
+import { getDataFirebase } from "../../Helpers/getDataFirebase";
+import { getBusiness } from "../../store/slices/account";
+import { handleInputChange } from "../../Helpers/handleChange";
+import { company_DB, myCompany } from "../../Helpers/firebaseTools";
 
 export const Account = () => {
   const navigate = useNavigate();
   const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
   const [isOpenMClient, openMClient, closeMClient]: any = useModal();
-  const [dataAccount, setDataAccount] = useState(dataConfigStore);
-  const [dataDataBase, setDataDataBase] = useState(credentialStore);
-  const nameBusinessDB = `${dataDataBase.nameDB}DB`;
-  const distpach = useDispatch();
+  const [store, setStore] = useState(dataConfigStore);
+  const data = myCompany === null ? myCompany : `${store.nameDB}DB`;
 
   const openGOSTORE = () => {
     navigate(RouterData.store);
@@ -45,29 +43,30 @@ export const Account = () => {
     navigate(RouterData.r_Ducuments);
   };
 
-  const createStore = async (e: any) => {
-    e.preventDefault();
-    const newCompany = {
-      nameStore: dataAccount.nameStore,
-      propetary: dataAccount.propetary,
-      dni: dataAccount.dni,
-      direction: dataAccount.direction,
-      iva: dataAccount.iva,
-      currency: dataAccount.current,
-      serie1: dataAccount.serie1,
-      serie2: dataAccount.serie2,
-      numfactura: dataAccount.numfactura,
-      numproforma: dataAccount.numproforma,
-      numnotadeventa: dataAccount.numnotadeventa,
-      codeActivator: dataDataBase.codeActivator,
-      DB: dataDataBase.dataBase,
-      date: DateNowFormat,
-      nameDB: nameBusinessDB,
-    };
+  const createStore = async () => {
+    // e.preventDefault();
 
+    const newCompany = {
+      nameStore: store.nameStore,
+      propetary: store.propetary,
+      dni: Number(store.dni),
+      direction: store.direction,
+      iva: Number(store.iva),
+      currency: store.current,
+      serie1: Number(store.serie1),
+      serie2: Number(store.serie2),
+      numfactura: Number(store.numfactura),
+      numproforma: Number(store.numproforma),
+      numnotadeventa: Number(store.numnotadeventa),
+      codeActivator: store.codeActivator,
+      date: DateNowFormat,
+      nameDB: data,
+    };
+    const { nameDB, dni } = newCompany;
+    localStorage.setItem("nameBusiness", JSON.stringify({ nameDB, dni }));
     try {
       // save data the company in firebase
-      await setDoc(doc(company_DB, dataAccount.dni), newCompany);
+      await setDoc(doc(company_DB, store.dni), newCompany);
     } catch (error) {
       console.log(error);
     }
@@ -77,14 +76,14 @@ export const Account = () => {
     e.preventDefault();
     try {
       const newSecuence = {
-        serie1: dataAccount.serie1,
-        serie2: dataAccount.serie2,
-        numfactura: dataAccount.numfactura,
-        numproforma: dataAccount.numproforma,
-        numnotadeventa: dataAccount.numnotadeventa,
+        serie1: Number(store.serie1),
+        serie2: Number(store.serie2),
+        numfactura: Number(store.numfactura),
+        numproforma: Number(store.numproforma),
+        numnotadeventa: Number(store.numnotadeventa),
       };
       // update the secuence of the documents in the company
-      await updateDoc(doc(company_DB, dataAccount.dni), newSecuence);
+      await updateDoc(doc(company_DB, store.dni), newSecuence);
     } catch (error) {
       console.log(error);
     }
@@ -92,21 +91,28 @@ export const Account = () => {
 
   const getDNI_Company = async (e: any) => {
     e.preventDefault();
-    const docRef = getDoc(doc(company_DB, dataAccount.dni));
-    const docSnap = await docRef;
-    const data = getDNICompany(docSnap.data());
-    console.log(data);
-    if (docSnap.exists()) {
-      console.log("El Cliente ya Existe");
-      distpach(searchDNI(true));
-      setDataAccount(data);
-      setDataDataBase(data);
-      distpach(searchDNI(true));
-    } else {
-      console.log("El Cliente no Existe");
-      distpach(searchDNI(false));
+    try {
+      const data = await getDocs(company_DB)
+        .then((querySnapshot) => {
+          return getDataFirebase(querySnapshot);
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+      const [res]: any = data;
+      console.log(res);
+    } catch (error) {
+      console.log(error);
     }
   };
+
+  useEffect(() => {
+    const defaultData = {
+      dni: 1721457495,
+      nameDB: "EruditoDB",
+    };
+    localStorage.setItem("nameBusiness", JSON.stringify(defaultData));
+  }, []);
 
   return (
     <div className="containerAccount">
@@ -159,13 +165,12 @@ export const Account = () => {
               NOMBRE EMPRESA
             </label>
             <input
+              id="nameStore"
               type="text"
               name="nameStore"
               className="inputNameCompany"
-              value={dataAccount.nameStore}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
+              value={store.nameStore}
+              onChange={(e) => handleInputChange(store, setStore, e)}
             />
           </div>
 
@@ -173,14 +178,14 @@ export const Account = () => {
             <label htmlFor="" className="labelDNICompany">
               RUC
             </label>
+
             <input
-              type="search"
+              id="age"
               name="dni"
+              type="number"
               className="inputDNICompany"
-              value={dataAccount.dni}
-              onChange={(e) =>
-                handleInputChange(dataAccount, setDataAccount, e)
-              }
+              value={store.dni}
+              onChange={(e) => handleInputChange(store, setStore, e)}
             />
             <button onClick={getDNI_Company}>
               <i className="fa-solid fa-magnifying-glass"></i>
@@ -193,10 +198,11 @@ export const Account = () => {
           </label>
           <input
             type="text"
+            id="direction"
             className="inputDirectionCompany"
             name="direction"
-            value={dataAccount.direction}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            value={store.direction}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
           <label htmlFor="" className="labelOwnerCompany">
             PROPIETARIO
@@ -205,8 +211,9 @@ export const Account = () => {
             type="text"
             className="inputOwnerCompany"
             name="propetary"
-            value={dataAccount.propetary}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            id="propetary"
+            value={store.propetary}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
         </div>
         <div className="contaierCompany3">
@@ -217,25 +224,25 @@ export const Account = () => {
             type="text"
             className="inputCompany"
             name="nameDB"
-            value={dataDataBase.nameDB}
-            onChange={(e) =>
-              handleInputChange(dataDataBase, setDataDataBase, e)
-            }
+            id="nameDB"
+            value={store.nameDB}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
           <label htmlFor="" className="labelIvaCompany">
             IVA
           </label>
           <input
-            type="text"
+            type="number"
             name="iva"
             className="inputIvaCompany"
-            value={dataAccount.iva}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            id="iva"
+            value={store.iva}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
-
           <select
             name="current"
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            id="current"
+            onChange={(e) => handleInputChange(store, setStore, e)}
           >
             <option>Dollar USD</option>
             <option>Peso CO</option>
@@ -249,25 +256,24 @@ export const Account = () => {
             type="password"
             className="inputActivatorCompany"
             name="codeActivator"
-            value={dataDataBase.codeActivator}
-            onChange={(e) =>
-              handleInputChange(dataDataBase, setDataDataBase, e)
-            }
+            id="codeActivator"
+            value={store.codeActivator}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
         </div>
         <div className="contaierCompany4">
           <p>Selecion El Motor de BDD</p>
           <select
             name="dataBase"
-            onChange={(e) =>
-              handleInputChange(dataDataBase, setDataDataBase, e)
-            }
+            id="dataBase"
+            onChange={(e) => handleInputChange(store, setStore, e)}
           >
             <option>FIREBASE</option>
             <option>MYSQL</option>
             <option>MONGODB</option>
           </select>
         </div>
+
         <div className="containerSecuence">
           <h4>Config Secuence</h4>
         </div>
@@ -275,50 +281,57 @@ export const Account = () => {
         <div className="contaierCompany5">
           <label htmlFor="">SERIE#1</label>
           <input
-            type="text"
+            type="number"
             name="serie1"
+            id="serie1"
             className="inputSerie1"
-            value={dataAccount.serie1}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            value={store.serie1}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
           <label htmlFor="">SERIE#2</label>
           <input
-            type="text"
+            type="number"
             name="serie2"
             className="inputSerie2"
-            value={dataAccount.serie2}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            id="serie2"
+            value={store.serie2}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
           <label htmlFor="">#FACTURA</label>
           <input
-            type="text"
+            type="number"
             className="secuenceDocument"
             name="numfactura"
-            value={dataAccount.numfactura}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            id="numfactura"
+            value={store.numfactura}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
           <label htmlFor="">#NOTA_VENTA</label>
           <input
-            type="text"
+            type="number"
             className="secuenceDocument"
             name="numnotadeventa"
-            value={dataAccount.numnotadeventa}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            id="numnotadeventa"
+            value={store.numnotadeventa}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
           <label htmlFor="">#PROFORMA</label>
           <input
-            type="text"
+            type="number"
             className="secuenceDocument"
             name="numproforma"
-            value={dataAccount.numproforma}
-            onChange={(e) => handleInputChange(dataAccount, setDataAccount, e)}
+            id="numproforma"
+            value={store.numproforma}
+            onChange={(e) => handleInputChange(store, setStore, e)}
           />
           <button onClick={updateSecuenceDocument}>
             <i className="fa-solid fa-floppy-disk"></i>
           </button>
         </div>
         <div className="containerButton">
-          <button onClick={createStore}>GUARDAR CONFIGURACIONES</button>
+          <button type="submit" onClick={createStore}>
+            GUARDAR CONFIGURACIONES
+          </button>
         </div>
       </div>
       <div className="containerButtonLogout">

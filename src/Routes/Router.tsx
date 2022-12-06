@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { imgProduct } from "../Helpers/imgControls";
+import { Formik } from "../Helpers/pruvea";
 import { Account } from "../Pages/Account/Account";
 import { Auth } from "../Pages/Auth/Auth";
 import { Cart } from "../Pages/Cart/Cart";
@@ -34,6 +35,7 @@ export const Router = ({ childrem }: any) => {
         <Route path={RouterData.r_Products} element={<Reports_Products />} />
         <Route path={RouterData.r_Ducuments} element={<Reports_Documents />} />
         <Route path={RouterData.page404} element={<Page404 />} />
+        <Route path="formik" element={<Formik />} />
       </Routes>
     </>
   );

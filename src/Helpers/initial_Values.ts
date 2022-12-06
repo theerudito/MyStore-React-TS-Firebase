@@ -1,4 +1,4 @@
-import { ICart } from "../interfaces/interfaces";
+import { ICart, ICompany } from "../interfaces/interfaces";
 
 export const dataConfigStore = {
   nameStore: "",
@@ -16,14 +16,21 @@ export const dataConfigStore = {
   numfactura: "",
   numnotadeventa: "",
   numproforma: "",
+  nameDB: "",
+  dataBase: {
+    mysql: "mysql",
+    mongodb: "mongodb",
+    firebase: "firebase",
+  },
+  codeActivator: "",
 };
 
 export const dataSecuence = {
-  numfactura: 0,
-  numnotadeventa: 0,
-  numproforma: 0,
-  serie1: 0,
-  serie2: 0,
+  numfactura: "",
+  numnotadeventa: "",
+  numproforma: "",
+  serie1: "",
+  serie2: "",
 };
 
 export const credentialStore = {
