@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RouterData } from "../../Routes/Router";
 import { useModal } from "../../Hook/useModal";
-import { useDispatch, useSelector } from "react-redux";
 import {
   imgAvatar,
   imgClient,
@@ -15,17 +14,18 @@ import { doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { ModalCreateProduct } from "../Modal/ModalProduct";
 import { ModalCreateClient } from "../Modal/ModalClient";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
-import { getDataFirebase } from "../../Helpers/getDataFirebase";
-import { getBusiness } from "../../store/slices/account";
+import { getDNICompany } from "../../Helpers/getDataFirebase";
 import { handleInputChange } from "../../Helpers/handleChange";
-import { company_DB, myCompany } from "../../Helpers/firebaseTools";
+import { company_DB } from "../../Helpers/firebaseTools";
+import { dbFirebase } from "../../firebase/firebase";
 
 export const Account = () => {
   const navigate = useNavigate();
   const [isOpenMProduct, openMProduct, closeMProduct]: any = useModal();
   const [isOpenMClient, openMClient, closeMClient]: any = useModal();
   const [store, setStore] = useState(dataConfigStore);
-  const data = myCompany === null ? myCompany : `${store.nameDB}DB`;
+  const [existe, setExiste] = useState(false);
+  const nameCompany = `${store.nameDB}DB`;
 
   const openGOSTORE = () => {
     navigate(RouterData.store);
@@ -45,11 +45,10 @@ export const Account = () => {
 
   const createStore = async () => {
     // e.preventDefault();
-
     const newCompany = {
       nameStore: store.nameStore,
       propetary: store.propetary,
-      dni: Number(store.dni),
+      dni: store.dni,
       direction: store.direction,
       iva: Number(store.iva),
       currency: store.current,
@@ -60,13 +59,19 @@ export const Account = () => {
       numnotadeventa: Number(store.numnotadeventa),
       codeActivator: store.codeActivator,
       date: DateNowFormat,
-      nameDB: data,
+      nameDB: nameCompany,
     };
-    const { nameDB, dni } = newCompany;
-    localStorage.setItem("nameBusiness", JSON.stringify({ nameDB, dni }));
     try {
-      // save data the company in firebase
-      await setDoc(doc(company_DB, store.dni), newCompany);
+      // save data in localstorage
+      const { nameDB, dni } = newCompany;
+      localStorage.setItem("nameBusiness", JSON.stringify({ nameDB, dni }));
+      // create the database of the company
+      if (existe === true) {
+        await updateDoc(doc(company_DB, store.dni), newCompany);
+        setExiste(false);
+      } else {
+        await setDoc(doc(dbFirebase, nameDB, store.dni), newCompany);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -92,27 +97,24 @@ export const Account = () => {
   const getDNI_Company = async (e: any) => {
     e.preventDefault();
     try {
-      const data = await getDocs(company_DB)
-        .then((querySnapshot) => {
-          return getDataFirebase(querySnapshot);
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-      const [res]: any = data;
-      console.log(res);
+      // solo actualiza una propiedad en localstorage
+      const { dni } = store;
+      const nameDB = `${store.nameDB}DB`;
+      localStorage.setItem("nameBusiness", JSON.stringify({ nameDB, dni }));
+      const docRef = getDoc(doc(company_DB, dni));
+      const docSnap = await docRef;
+      const data = getDNICompany(docSnap.data());
+      if (docSnap.exists()) {
+        //console.log("El Cliente ya Existe");
+        setStore(data);
+        setExiste(true);
+      } else {
+        //console.log("El Cliente no Existe");
+      }
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    const defaultData = {
-      dni: 1721457495,
-      nameDB: "EruditoDB",
-    };
-    localStorage.setItem("nameBusiness", JSON.stringify(defaultData));
-  }, []);
 
   return (
     <div className="containerAccount">

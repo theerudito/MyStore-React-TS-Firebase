@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Burger } from "../../Burger/Burger";
@@ -10,9 +10,8 @@ import {
   company_DB,
   DNI_COMPANY,
 } from "../../Helpers/firebaseTools";
-import { GET_COMPANY } from "../../Helpers/getDataFactory";
 
-import { getDNIClient } from "../../Helpers/getDataFirebase";
+import { getDNIClient, getDNICompany } from "../../Helpers/getDataFirebase";
 import { DateNowFormat } from "../../Helpers/getDate_Hour";
 import { handleInputChange } from "../../Helpers/handleChange";
 import { imgStore } from "../../Helpers/imgControls";
@@ -39,13 +38,14 @@ export const Cart = () => {
   const { seachClientDNI } = useSelector((state: any) => state.clients);
 
   const getCompanyIva = async () => {
-    const company: any = await GET_COMPANY();
-    const { numfactura, serie1, serie2, iva } = company;
-    setIvaCompany(iva);
+    const docRef = getDoc(doc(company_DB, DNI_COMPANY));
+    const docSnap = await docRef;
+    const data = getDNICompany(docSnap.data());
+    setIvaCompany(data.iva);
     setNumDocuFac({
-      numfactura,
-      serie1,
-      serie2,
+      numfactura: data.numfactura,
+      serie1: data.serie1,
+      serie2: data.serie2,
     });
   };
 
@@ -101,12 +101,12 @@ export const Cart = () => {
     const docSnap = await docRef;
     const data = getDNIClient(docSnap.data());
     if (docSnap.exists()) {
-      console.log("El Cliente ya Existe");
+      //console.log("El Cliente ya Existe");
       distpach(searchDNI(true));
       setClient(data);
       distpach(searchDNI(true));
     } else {
-      console.log("El Cliente no Existe");
+      //console.log("El Cliente no Existe");
       distpach(searchDNI(false));
       setClient(clientFinal);
     }
@@ -239,7 +239,10 @@ export const Cart = () => {
               <option value="">Factura</option>
               <option value="">Proforma</option>
             </select>
-            <p>#Document {numDocuFac.numfactura} </p>
+            <p>
+              #Document {numDocuFac.serie1}-
+              {numDocuFac.serie2}-{numDocuFac.numfactura}{" "}
+            </p>
 
             <div className="containerSecuence">
               <input

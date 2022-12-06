@@ -10,7 +10,7 @@ export const accountSlice = createSlice({
   reducers: {
     getBusiness: (state, action) => {
       state.nameBusiness = action.payload;
-      localStorage.setItem("nameBusiness", JSON.stringify(action.payload));
+      //localStorage.setItem("nameBusiness", JSON.stringify(action.payload));
       state.exists = true;
     },
   },
