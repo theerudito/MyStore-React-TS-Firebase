@@ -1,0 +1,199 @@
+.containerDocument {
+  height: auto;
+  background-color: azure;
+  align-items: center;
+  justify-content: center;
+  display: grid;
+
+  .containerInforCompany {
+    background-color: bisque;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    .containerCompanyInfor1 {
+      width: 100%;
+
+      .containerCompanyInforLogo {
+        img {
+          width: 50%;
+          height: 50%;
+          align-items: center;
+          justify-content: center;
+          margin: auto;
+          display: flex;
+        }
+      }
+      .containerCompanyInforData {
+        width: 99%;
+        margin: 10px;
+        border-radius: 5px;
+        border: 1px solid #0099ff;
+        padding-left: 5px;
+        padding-top: 10px;
+        span {
+          font-weight: bold;
+        }
+        .box1 {
+          display: flex;
+          p {
+            margin-left: 10px;
+          }
+        }
+
+        h5 {
+          font-weight: bold;
+        }
+      }
+    }
+
+    .containerCompanyInfor2 {
+      margin: 10px;
+      width: 95%;
+      border-radius: 5px;
+      border: 1px solid #0099ff;
+      padding-left: 5px;
+      padding-top: 10px;
+      span {
+        font-weight: bold;
+      }
+      .box1 {
+        display: flex;
+        p {
+          margin-left: 10px;
+        }
+      }
+
+      h4 {
+        color: red;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+        display: flex;
+      }
+    }
+  }
+
+  .conpanyinfoClient {
+    background-color: #0099ff;
+    width: 99%;
+
+    border-radius: 5px;
+    display: grid;
+    border: 1px solid #0099ff;
+    padding-left: 5px;
+    padding-top: 10px;
+    grid-template-columns: 1fr 1fr;
+
+    span {
+      font-weight: bold;
+    }
+  }
+  .contaiderDetails {
+    width: 99%;
+    height: auto;
+    .containerUL1 {
+      margin-top: 5px;
+
+      .descriptionUl {
+        align-self: flex-start;
+        width: 50%;
+        // alinear texto a la izquierda
+        text-align: left;
+        // borde a la izquierda
+      }
+
+      ul {
+        border-radius: 5px 5px 0px 0px;
+        background-color: #0099ff;
+        list-style: none;
+        display: flex;
+        li {
+          margin: 10px;
+          height: 10px;
+          justify-content: center;
+          align-items: center;
+          display: flex;
+        }
+      }
+    }
+    .containerUL2 {
+      margin-top: -15px;
+      // border de la tabla;
+      ul {
+        list-style: none;
+        display: flex;
+        border-bottom: 1px solid #0099ff;
+        li {
+          margin: 10px;
+          height: 10px;
+          justify-content: center;
+          align-items: center;
+          display: flex;
+        }
+      }
+      .descriptionU2 {
+        width: 48.2%;
+      }
+      .priceUnitariU2 {
+        width: 8%;
+      }
+      .descUl {
+        width: 8%;
+      }
+      .priceTotalU2 {
+        width: 8%;
+      }
+      .cantU2 {
+        width: 50px;
+      }
+    }
+  }
+
+  .containerDetailsData {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    .containerInfoAditional {
+      background-color: aquamarine;
+
+      border: solid 1px #0099ff;
+      border-radius: 5px;
+
+      .infoAditional {
+        display: flex;
+        background-color: #0099ff;
+        color: #fff;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .box2 {
+        display: flex;
+        padding-left: 10px;
+      }
+    }
+
+    .containerFormaPago {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin: 0px;
+      padding: 0px;
+      li {
+        list-style: none;
+      }
+    }
+
+    .containerInfoPrices {
+      p {
+        margin: 0;
+        padding: 0;
+        padding-left: 10px;
+      }
+      border: solid 1px #0099ff;
+      border-radius: 5px;
+    }
+  }
+}
